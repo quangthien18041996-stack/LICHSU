@@ -1549,29 +1549,8 @@
             setInterval(fetchCloudInteractions, CLOUD_SYNC_CONFIG.pollInterval);
 
 
-            // Auto Route URL Search Params (khi học sinh quét QR từ điện thoại)
-            try {
-                const urlParams = new URLSearchParams(window.location.search);
-                const targetTab = urlParams.get('tab');
-                const targetGroup = parseInt(urlParams.get('nhom'));
-                const reviewGroup = parseInt(urlParams.get('review'));
-
-                if (targetTab) {
-                    switchTab(targetTab);
-                }
-                if (targetGroup && targetGroup >= 1 && targetGroup <= 4) {
-                    setTimeout(() => selectActiveGroup(targetGroup), 150);
-                }
-                const posterParam = parseInt(urlParams.get('poster')) || reviewGroup;
-                if (posterParam && posterParam >= 1 && posterParam <= 4) {
-                    switchTab('gallery');
-                    setTimeout(() => {
-                        openPosterDetailModal(posterParam);
-                    }, 200);
-                }
-            } catch (e) {
-                console.warn('URL params parsing notice:', e);
-            }
+            // Kích hoạt bộ định tuyến URL
+            handleUrlRouting();
 
         });
 
@@ -2248,7 +2227,7 @@ function switchTab(tabId) {
             for (let i = 1; i <= 4; i++) {
                 const g = GROUPS_DATA[i];
                 const isApproved = (g.status === 'approved');
-                const qrPayload = `${getBaseAppUrl()}?poster=${i}`;
+                const qrPayload = `${getBaseAppUrl()}?poster=${i}#poster-${i}`;
                 const reviewCount = g.reviews ? g.reviews.length : 0;
                 const likesCount = g.likes || 0;
 
@@ -2437,13 +2416,13 @@ function switchTab(tabId) {
             let html = '';
             for (let i = 1; i <= 4; i++) {
                 const g = GROUPS_DATA[i];
-                const qrPayload = `${getBaseAppUrl()}?poster=${i}`;
+                const qrPayload = `${getBaseAppUrl()}?poster=${i}#poster-${i}`;
                 const reviewCount = g.reviews ? g.reviews.length : 0;
                 const likesCount = g.likes || 0;
                 const posterImgSrc = g.posterImg || g.mapImg || `images/hero_slide_${i}.jpg?v=epic`;
 
                 html += `
-                <div class="exhibition-poster tayson-royal-border relative rounded-3xl overflow-hidden border-2 border-amber-500/70 bg-gradient-to-b from-[#1a110e] via-[#130d0b] to-[#0b0807] shadow-[0_25px_70px_rgba(0,0,0,0.9)] hover:border-amber-400 hover:shadow-[0_30px_90px_rgba(245,158,11,0.3)] transition-all duration-500">
+                <div id="poster-group-${i}" class="exhibition-poster tayson-royal-border relative rounded-3xl overflow-hidden border-2 border-amber-500/70 bg-gradient-to-b from-[#1a110e] via-[#130d0b] to-[#0b0807] shadow-[0_25px_70px_rgba(0,0,0,0.9)] hover:border-amber-400 hover:shadow-[0_30px_90px_rgba(245,158,11,0.3)] transition-all duration-500">
                     <!-- 4 Bronze Drum Sun Motifs (Họa tiết Trống đồng Đông Sơn 4 góc) -->
                     <svg class="absolute top-2.5 left-2.5 w-8 h-8 sm:w-10 sm:h-10 text-amber-500/80 pointer-events-none z-10 drop-shadow-[0_0_6px_rgba(245,158,11,0.6)]" viewBox="0 0 48 48" fill="none">
     <path d="M 4 44 V 16 A 12 12 0 0 1 16 4 H 44" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
@@ -2707,6 +2686,7 @@ function switchTab(tabId) {
 
             try { playChiengDong(460, 1.2, 0.35); } catch(e) {}
 
+            modal.style.display = 'flex';
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             document.body.style.overflow = 'hidden';
@@ -2715,6 +2695,7 @@ function switchTab(tabId) {
         function closeMysteryChallengeModal() {
             const modal = document.getElementById('mystery-challenge-modal');
             if (modal) {
+                modal.style.display = 'none';
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
                 document.body.style.overflow = '';
@@ -2819,6 +2800,7 @@ function switchTab(tabId) {
             const mSub = document.getElementById('poster-modal-mystery-subtitle');
             if (mSub) mSub.textContent = `Câu hỏi sử học độc quyền dành riêng cho ${g.name}`;
 
+            modal.style.display = 'flex';
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             document.body.style.overflow = 'hidden';
@@ -2925,6 +2907,7 @@ function switchTab(tabId) {
         function closePosterDetailModal() {
             const modal = document.getElementById('exhibition-poster-modal');
             if (modal) {
+                modal.style.display = 'none';
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
                 document.body.style.overflow = '';
@@ -4257,6 +4240,7 @@ Poster Triển Lãm Lịch Sử và Mã QR của nhóm đã được tạo hoàn
         function closeHeroCinemaModal() {
             const modal = document.getElementById('hero-cinema-modal');
             if (modal) {
+                modal.style.display = 'none';
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
                 document.body.style.overflow = '';
@@ -4463,6 +4447,86 @@ Poster Triển Lãm Lịch Sử và Mã QR của nhóm đã được tạo hoàn
                 }
             }
         });
+
+        // =========================================================================
+        // ROBUST MULTI-DEVICE URL ROUTER (BẢO ĐẢM 100% QUÉT MÃ QR MỞ ĐÚNG POSTER)
+        // =========================================================================
+        function handleUrlRouting() {
+            try {
+                let posterId = null;
+                let tabId = null;
+                let nhomId = null;
+
+                // 1. Phân tích tham số tìm kiếm (?poster=1, ?review=1, ?nhom=1, ?tab=...)
+                const search = window.location.search || '';
+                if (search) {
+                    const urlParams = new URLSearchParams(search);
+                    if (urlParams.has('poster')) posterId = parseInt(urlParams.get('poster'));
+                    else if (urlParams.has('review')) posterId = parseInt(urlParams.get('review'));
+                    if (urlParams.has('nhom')) nhomId = parseInt(urlParams.get('nhom'));
+                    if (urlParams.has('tab')) tabId = urlParams.get('tab');
+                }
+
+                // 2. Phân tích hash fallback (#poster-1, #nhom-1, #gallery)
+                const hash = window.location.hash || '';
+                if (hash) {
+                    const mPoster = hash.match(/poster-?([1-4])/i);
+                    if (mPoster) posterId = parseInt(mPoster[1]);
+                    const mNhom = hash.match(/nhom-?([1-4])/i);
+                    if (mNhom) nhomId = parseInt(mNhom[1]);
+                    if (hash.includes('gallery')) tabId = 'gallery';
+                    if (hash.includes('workspaces')) tabId = 'workspaces';
+                }
+
+                // 3. Xử lý mở Poster nếu có tham số posterId
+                if (posterId && posterId >= 1 && posterId <= 4) {
+                    switchTab('gallery');
+                    if (typeof openPosterDetailModal === 'function') {
+                        openPosterDetailModal(posterId);
+                    }
+                    setTimeout(() => {
+                        if (typeof openPosterDetailModal === 'function') openPosterDetailModal(posterId);
+                        const el = document.getElementById(`poster-group-${posterId}`);
+                        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 250);
+                    return true;
+                }
+
+                // 4. Xử lý vào không gian làm việc của nhóm
+                if (nhomId && nhomId >= 1 && nhomId <= 4) {
+                    switchTab('workspaces');
+                    if (typeof selectGroupWorkspace === 'function') {
+                        selectGroupWorkspace(nhomId);
+                    } else if (typeof renderActiveGroupForm === 'function') {
+                        renderActiveGroupForm(nhomId);
+                    }
+                    return true;
+                }
+
+                // 5. Chuyển tab nếu có tabId
+                if (tabId) {
+                    switchTab(tabId);
+                    return true;
+                }
+            } catch (err) {
+                console.warn('URL routing warning:', err);
+            }
+            return false;
+        }
+
+        // Kích hoạt ngay lập tức trên mọi vòng đời trình duyệt (desktop, mobile safari, android, zalo webview)
+        if (typeof window !== 'undefined') {
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', handleUrlRouting);
+            } else {
+                handleUrlRouting();
+            }
+            window.addEventListener('load', handleUrlRouting);
+            window.addEventListener('hashchange', handleUrlRouting);
+            setTimeout(handleUrlRouting, 350);
+            setTimeout(handleUrlRouting, 1000);
+        }
+
 </script>
 
     <!-- ========================================== -->
