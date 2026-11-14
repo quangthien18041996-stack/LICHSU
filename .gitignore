@@ -1,0 +1,5 @@
+# Temporary & backup files
+*.bak
+*.pyc
+__pycache__/
+test_voice.mp3
