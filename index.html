@@ -1562,11 +1562,12 @@
                 if (targetGroup && targetGroup >= 1 && targetGroup <= 4) {
                     setTimeout(() => selectActiveGroup(targetGroup), 150);
                 }
-                if (reviewGroup && reviewGroup >= 1 && reviewGroup <= 4) {
+                const posterParam = parseInt(urlParams.get('poster')) || reviewGroup;
+                if (posterParam && posterParam >= 1 && posterParam <= 4) {
                     switchTab('gallery');
                     setTimeout(() => {
-                        openPeerReviewModal(reviewGroup);
-                    }, 250);
+                        openPosterDetailModal(posterParam);
+                    }, 200);
                 }
             } catch (e) {
                 console.warn('URL params parsing notice:', e);
@@ -2193,7 +2194,7 @@ function switchTab(tabId) {
                 targetUrl = baseUrl;
                 label = "Trang chủ bài học (Toàn bộ hoạt động)";
             } else {
-                targetUrl = `${baseUrl}?tab=gallery&review=${target}`;
+                targetUrl = `${baseUrl}?poster=${target}`;
                 label = `Poster, Thả Tim & Bình Luận: Nhóm ${target}`;
             }
 
@@ -2247,7 +2248,7 @@ function switchTab(tabId) {
             for (let i = 1; i <= 4; i++) {
                 const g = GROUPS_DATA[i];
                 const isApproved = (g.status === 'approved');
-                const qrPayload = `${getBaseAppUrl()}?tab=gallery&review=${i}`;
+                const qrPayload = `${getBaseAppUrl()}?poster=${i}`;
                 const reviewCount = g.reviews ? g.reviews.length : 0;
                 const likesCount = g.likes || 0;
 
@@ -2436,7 +2437,7 @@ function switchTab(tabId) {
             let html = '';
             for (let i = 1; i <= 4; i++) {
                 const g = GROUPS_DATA[i];
-                const qrPayload = `${getBaseAppUrl()}?tab=gallery&review=${i}`;
+                const qrPayload = `${getBaseAppUrl()}?poster=${i}`;
                 const reviewCount = g.reviews ? g.reviews.length : 0;
                 const likesCount = g.likes || 0;
                 const posterImgSrc = g.posterImg || g.mapImg || `images/hero_slide_${i}.jpg?v=epic`;
@@ -2573,7 +2574,7 @@ function switchTab(tabId) {
                             <!-- Bottom QR Code & Author Credits -->
                             <div class="pt-3 border-t border-amber-900/40 flex items-center justify-between gap-3">
                                 <div class="flex items-center gap-3">
-                                    <div class="bg-white p-1.5 rounded-xl border-2 border-amber-400 shadow-md shrink-0 cursor-pointer" onclick="openPeerReviewModal(${i})" title="Quét hoặc Bấm để Thả Tim & Bình Luận cho nhóm">
+                                    <div class="bg-white p-1.5 rounded-xl border-2 border-amber-400 shadow-md shrink-0 cursor-pointer" onclick="openPosterDetailModal(${i})" title="Quét hoặc Bấm để vào thẳng Poster, Thả Tim & Bình Luận">
                                         ${generateQRCodeSVG(qrPayload, 62)}
                                     </div>
                                     <div>
@@ -2589,8 +2590,8 @@ function switchTab(tabId) {
                                     <span class="text-xs text-rose-400 font-semibold mr-1">
                                         <i class="fa-solid fa-heart mr-1"></i> ${likesCount} tim
                                     </span>
-                                    <button onclick="openPeerReviewModal(${i})" class="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold transition flex items-center gap-1.5">
-                                        <i class="fa-solid fa-comments"></i> Chấm Điểm
+                                    <button onclick="openPosterDetailModal(${i})" class="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold transition flex items-center gap-1.5">
+                                        <i class="fa-solid fa-comments"></i> Bình Luận & Tim
                                     </button>
                                 </div>
                             </div>
@@ -2792,6 +2793,11 @@ function switchTab(tabId) {
             document.getElementById('poster-modal-summary').textContent = g.summary || 'Chưa cập nhật';
             document.getElementById('poster-modal-members').textContent = g.members || 'Tập thể nhóm';
 
+            // Sync Likes and Reviews in Poster Modal
+            const likeCountEl = document.getElementById('poster-modal-likes-count');
+            if (likeCountEl) likeCountEl.textContent = g.likes || 0;
+            renderPosterModalReviewsList(groupId);
+
             const posterImgSrc = g.posterImg || g.mapImg || `images/hero_slide_${groupId}.jpg?v=epic`;
             document.getElementById('poster-modal-img').src = posterImgSrc;
 
@@ -2816,6 +2822,104 @@ function switchTab(tabId) {
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             document.body.style.overflow = 'hidden';
+        }
+
+        
+        // --- POSTER MODAL LIKE & COMMENT INTERACTION FUNCTIONS ---
+        function addPosterQuickTag(tagText) {
+            const input = document.getElementById('poster-modal-comment-input');
+            if (!input) return;
+            if (input.value.trim() === '') {
+                input.value = tagText + ' ';
+            } else {
+                input.value += '; ' + tagText;
+            }
+            input.focus();
+        }
+
+        async function likePosterModalGroup() {
+            const groupId = currentModalPosterGroupId;
+            const g = GROUPS_DATA[groupId];
+            if (!g) return;
+
+            g.likes = (g.likes || 0) + 1;
+            const countEl = document.getElementById('poster-modal-likes-count');
+            if (countEl) countEl.textContent = g.likes;
+
+            // Visual celebration
+            const btn = document.getElementById('btn-like-poster-modal');
+            if (btn) {
+                btn.classList.add('scale-115', 'shadow-rose-600/80');
+                setTimeout(() => btn.classList.remove('scale-115', 'shadow-rose-600/80'), 300);
+            }
+
+            renderGalleryTimeline();
+            // Sync to cloud
+            await pushCloudInteraction('like', groupId);
+        }
+
+        async function submitPosterModalReview() {
+            const groupId = currentModalPosterGroupId;
+            const g = GROUPS_DATA[groupId];
+            if (!g) return;
+
+            const input = document.getElementById('poster-modal-comment-input');
+            const reviewerSelect = document.getElementById('poster-modal-reviewer-select');
+            const comment = input ? input.value.trim() : '';
+            if (!comment) {
+                alert("Vui lòng ghi lại đôi lời bình luận hoặc nhận xét cho poster nhé!");
+                return;
+            }
+
+            const reviewerName = reviewerSelect ? reviewerSelect.value : 'Học sinh';
+            const newReview = {
+                reviewer: reviewerName,
+                score: 10,
+                comment: comment,
+                time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+            };
+
+            if (!g.reviews) g.reviews = [];
+            g.reviews.unshift(newReview);
+
+            if (input) input.value = '';
+            renderPosterModalReviewsList(groupId);
+
+            const submitBtn = document.getElementById('btn-submit-poster-review');
+            if (submitBtn) submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Đang gửi...';
+
+            await pushCloudInteraction('comment', groupId, newReview);
+
+            if (submitBtn) submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane mr-1.5"></i> Gửi Bình Luận Lên Máy Chiếu';
+            alert(`🎉 Cảm ơn ${reviewerName} đã gửi lời bình phẩm! Bình luận đã được đồng bộ trực tiếp lên màn hình lớp học.`);
+            renderGalleryTimeline();
+        }
+
+        function renderPosterModalReviewsList(groupId) {
+            const g = GROUPS_DATA[groupId];
+            const listEl = document.getElementById('poster-modal-reviews-list');
+            const countEl = document.getElementById('poster-modal-reviews-count');
+            if (!g || !listEl) return;
+
+            const reviews = g.reviews || [];
+            if (countEl) countEl.textContent = reviews.length;
+
+            if (reviews.length === 0) {
+                listEl.innerHTML = '<p class="text-xs text-stone-500 italic p-3 text-center bg-black/40 rounded-xl">Chưa có bình luận nào. Hãy là người đầu tiên để lại cảm nhận cho poster này!</p>';
+                return;
+            }
+
+            listEl.innerHTML = reviews.map(r => `
+                <div class="bg-black/60 p-2.5 rounded-xl border border-stone-800 space-y-1 text-xs">
+                    <div class="flex items-center justify-between text-[11px]">
+                        <span class="font-bold text-amber-300 flex items-center gap-1">
+                            <i class="fa-solid fa-user-circle text-amber-400"></i> ${r.reviewer}
+                        </span>
+                        <span class="text-stone-500 font-mono text-[10px]">${r.time || ''}</span>
+                    </div>
+                    <p class="text-stone-300 leading-relaxed pl-4 border-l border-amber-600/40">${r.comment}</p>
+                </div>
+            `).join('');
         }
 
         function closePosterDetailModal() {
@@ -4631,6 +4735,74 @@ Poster Triển Lãm Lịch Sử và Mã QR của nhóm đã được tạo hoàn
                                 <i id="modal-icon-poster-voice" class="fa-solid fa-play"></i>
                                 <span id="modal-lbl-poster-voice">Nghe Giọng Đọc</span>
                             </button>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <!-- LIVE INTERACTION SECTION: THẢ TIM & BÌNH LUẬN TRỰC TIẾP TRÊN POSTER -->
+                <div class="pt-6 border-t border-amber-800/50 space-y-5 bg-gradient-to-b from-stone-950/80 to-black p-5 sm:p-6 rounded-2xl border border-amber-600/40">
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-stone-800 pb-4">
+                        <div class="space-y-0.5">
+                            <h4 class="text-base sm:text-lg font-black font-cinzel text-amber-300 flex items-center gap-2">
+                                <i class="fa-solid fa-heart text-rose-500"></i> BÌNH CHỌN & GỬI CẢM NHẬN CHO POSTER
+                            </h4>
+                            <p class="text-xs text-stone-400">Thả tim và để lại lời bình phẩm lịch sử, dữ liệu sẽ đồng bộ trực tiếp lên màn hình lớp học</p>
+                        </div>
+
+                        <!-- Big Attractive Like Button -->
+                        <button type="button" id="btn-like-poster-modal" onclick="likePosterModalGroup()" class="cursor-pointer px-5 py-2.5 rounded-2xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-black text-sm flex items-center gap-2 shadow-xl shadow-rose-950/60 transition transform active:scale-95 hover:scale-105 border border-rose-400">
+                            <i class="fa-solid fa-heart text-base animate-pulse"></i>
+                            <span>Thả Tim</span>
+                            <span id="poster-modal-likes-count" class="px-2 py-0.5 rounded-full bg-black/40 text-yellow-300 text-xs font-mono ml-1">0</span>
+                        </button>
+                    </div>
+
+                    <!-- Quick Compliment Tags -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold text-amber-200">Gợi ý nhận xét nhanh:</label>
+                        <div class="flex flex-wrap gap-2 text-xs">
+                            <button type="button" onclick="addPosterQuickTag('🚩 Khí thế hào hùng, hình ảnh rất ấn tượng!')" class="px-3 py-1 rounded-lg bg-stone-900 hover:bg-amber-600 hover:text-stone-950 text-stone-300 border border-stone-700 transition">🚩 Hình ảnh hào hùng</button>
+                            <button type="button" onclick="addPosterQuickTag('⚔️ Phân tích chiến thuật quân sự sâu sắc!')" class="px-3 py-1 rounded-lg bg-stone-900 hover:bg-amber-600 hover:text-stone-950 text-stone-300 border border-stone-700 transition">⚔️ Chiến thuật sâu sắc</button>
+                            <button type="button" onclick="addPosterQuickTag('🎙️ Thuyết minh diễn cảm, nghe rất cuốn hút!')" class="px-3 py-1 rounded-lg bg-stone-900 hover:bg-amber-600 hover:text-stone-950 text-stone-300 border border-stone-700 transition">🎙️ Lời kể truyền cảm</button>
+                            <button type="button" onclick="addPosterQuickTag('⭐ 10 điểm sáng tạo cho poster nhóm!')" class="px-3 py-1 rounded-lg bg-stone-900 hover:bg-amber-600 hover:text-stone-950 text-stone-300 border border-stone-700 transition">⭐ 10 điểm sáng tạo</button>
+                        </div>
+                    </div>
+
+                    <!-- Comment Input Form -->
+                    <div class="space-y-3">
+                        <div class="flex flex-wrap items-center gap-3">
+                            <span class="text-xs text-stone-400 font-semibold">Bạn là:</span>
+                            <select id="poster-modal-reviewer-select" class="bg-stone-900 border border-amber-600/40 text-amber-300 font-bold text-xs rounded-xl px-3 py-2 outline-none">
+                                <option value="Nhóm 1">Học sinh Nhóm 1</option>
+                                <option value="Nhóm 2">Học sinh Nhóm 2</option>
+                                <option value="Nhóm 3">Học sinh Nhóm 3</option>
+                                <option value="Nhóm 4">Học sinh Nhóm 4</option>
+                                <option value="Khách Tham Quan">Khách Tham Quan / Thầy Cô</option>
+                            </select>
+                        </div>
+
+                        <div class="relative">
+                            <textarea id="poster-modal-comment-input" rows="2" placeholder="Nhập lời bình luận, nhận xét hoặc cảm nhận về poster này..." class="w-full bg-stone-900/90 border border-stone-700 focus:border-amber-500 rounded-xl p-3 text-xs text-stone-200 outline-none placeholder:text-stone-500 transition resize-none"></textarea>
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button type="button" id="btn-submit-poster-review" onclick="submitPosterModalReview()" class="cursor-pointer px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-stone-950 font-black text-xs shadow-lg flex items-center gap-2 transition transform active:scale-95">
+                                <i class="fa-solid fa-paper-plane"></i> Gửi Bình Luận Lên Máy Chiếu
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Reviews List on Poster -->
+                    <div class="space-y-3 pt-3 border-t border-stone-800">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="font-bold text-amber-200 flex items-center gap-1.5">
+                                <i class="fa-solid fa-comments text-amber-400"></i> Lời Bình Phẩm Của Các Bạn (<span id="poster-modal-reviews-count">0</span>)
+                            </span>
+                            <span class="text-[10px] text-stone-400 font-mono">Đồng bộ đám mây trực tiếp</span>
+                        </div>
+                        <div id="poster-modal-reviews-list" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                            <!-- Injected by renderPosterModalReviewsList -->
                         </div>
                     </div>
                 </div>
