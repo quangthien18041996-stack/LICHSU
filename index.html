@@ -1513,7 +1513,7 @@
                 ],
                 sgkQuote: "Quân Tây Sơn đi đến đâu, quân Trịnh tan vỡ đến đó. Khí thế ngút trời...",
                 sgkQuoteSource: "(Theo Lịch sử Việt Nam phổ thông)",
-                mapName: "Sơ đồ tiến quân ra Bắc Hà của Nguyễn Huệ (1786 - 1788)",
+                mapName: null, mapImg: null,
                 questions: [
                     "Tại sao khẩu hiệu 'Phù Lê diệt Trịnh' lại giúp Nguyễn Huệ nhanh chóng chiếm được thiện cảm của nhân dân Bắc Hà?",
                     "Ý nghĩa to lớn nhất của việc lật đổ hai tập đoàn phong kiến Trịnh - Nguyễn là gì?"
@@ -1763,15 +1763,22 @@ function switchTab(tabId) {
 
             document.getElementById('ref-quote').textContent = `"${data.sgkQuote}"`;
             document.getElementById('ref-quote-source').textContent = data.sgkQuoteSource;
-            document.getElementById('ref-map-name').textContent = data.mapName;
+            const mapBox = document.getElementById('ref-map-box');
             const mapImgContainer = document.getElementById('ref-map-img-container');
             const mapImgEl = document.getElementById('ref-map-img');
+            const mapNameEl = document.getElementById('ref-map-name');
+
             if (data.mapImg) {
-                mapImgEl.src = data.mapImg;
-                mapImgEl.alt = data.mapName;
-                mapImgContainer.classList.remove('hidden');
+                if (mapBox) mapBox.classList.remove('hidden');
+                if (mapNameEl) mapNameEl.textContent = data.mapName || 'Lược đồ tham khảo';
+                if (mapImgEl) {
+                    mapImgEl.src = data.mapImg;
+                    mapImgEl.alt = data.mapName || 'Lược đồ tư liệu SGK';
+                }
+                if (mapImgContainer) mapImgContainer.classList.remove('hidden');
             } else {
-                mapImgContainer.classList.add('hidden');
+                // Nhóm không có lược đồ (như Nhóm 3): ẩn hoàn toàn toàn bộ khung này đi
+                if (mapBox) mapBox.classList.add('hidden');
             }
 
             const qList = document.getElementById('guiding-questions');
