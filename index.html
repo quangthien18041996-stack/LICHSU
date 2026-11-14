@@ -1544,6 +1544,11 @@
             renderGalleryTimeline();
             updateTeacherDashboard();
 
+            // Khởi động đồng bộ đám mây thời gian thực (Realtime Cloud Sync)
+            fetchCloudInteractions();
+            setInterval(fetchCloudInteractions, CLOUD_SYNC_CONFIG.pollInterval);
+
+
             // Auto Route URL Search Params (khi học sinh quét QR từ điện thoại)
             try {
                 const urlParams = new URLSearchParams(window.location.search);
@@ -2993,7 +2998,7 @@ Poster Triển Lãm Lịch Sử và Mã QR của nhóm đã được tạo hoàn
             `).join('');
         }
 
-        function submitPeerReview() {
+        async function submitPeerReview() {
             const input = document.getElementById('modal-comment-input');
             const reviewerSelect = document.getElementById('modal-reviewer-select');
             const comment = input ? input.value.trim() : '';
@@ -3007,13 +3012,14 @@ Poster Triển Lãm Lịch Sử và Mã QR của nhóm đã được tạo hoàn
             if (!g.reviews) g.reviews = [];
 
             const reviewerName = reviewerSelect ? reviewerSelect.value : 'Nhóm Khách (QR)';
-
-            g.reviews.unshift({
+            const newReview = {
                 reviewer: reviewerName,
                 score: currentTempScore,
                 comment: comment,
                 time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
-            });
+            };
+
+            g.reviews.unshift(newReview);
 
             // Calculate average score
             const sum = g.reviews.reduce((acc, curr) => acc + curr.score, 0);
@@ -3023,9 +3029,16 @@ Poster Triển Lãm Lịch Sử và Mã QR của nhóm đã được tạo hoàn
             if (input) input.value = '';
             
             renderModalReviewsList(g);
-            alert(`🎉 Cảm ơn ${reviewerName} đã gửi cảm nhận và chấm ${currentTempScore} điểm cho ${g.name}!`);
-            closePeerReviewModal();
-            generateAllQRCodes();
+
+            const submitBtn = document.getElementById('btn-submit-review');
+            if (submitBtn) submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Đang đồng bộ...';
+
+            // Đồng bộ trực tiếp lên máy chiếu đám mây
+            await pushCloudInteraction('comment', selectedReviewGroup, newReview);
+
+            if (submitBtn) submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane mr-1.5"></i> Gửi Cảm Nhận';
+            alert(`🎉 Cảm ơn ${reviewerName} đã gửi cảm nhận! Bình luận và lượt thả tim đã được đồng bộ trực tiếp lên màn hình lớp học.`);
+            
             updateTeacherDashboard();
             renderGalleryTimeline();
         }
