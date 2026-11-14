@@ -2808,6 +2808,148 @@ function switchTab(tabId) {
 
         
         // --- POSTER MODAL LIKE & COMMENT INTERACTION FUNCTIONS ---
+        
+        // =========================================================================
+        // REALTIME CLOUD SYNC ENGINE (ĐỒNG BỘ ĐÁM MÂY THỜI GIAN THỰC)
+        // =========================================================================
+        const CLOUD_SYNC_CONFIG = {
+            endpoint: 'https://api.restful-api.dev/objects/ff808181a09d98f701a1dad1d10c2aaf',
+            pollInterval: 3000,
+            isSyncing: false
+        };
+
+        async function fetchCloudInteractions(isManual = false) {
+            if (CLOUD_SYNC_CONFIG.isSyncing) return;
+            try {
+                const res = await fetch(CLOUD_SYNC_CONFIG.endpoint, {
+                    headers: { 'Accept': 'application/json' }
+                });
+                if (!res.ok) return;
+                const json = await res.json();
+                if (json && json.data) {
+                    applyCloudData(json.data);
+                    if (isManual) {
+                        const syncStatusEls = document.querySelectorAll('.sync-status-indicator');
+                        syncStatusEls.forEach(el => {
+                            el.innerHTML = '<i class="fa-solid fa-check text-emerald-400 mr-1"></i> Đã đồng bộ!';
+                            setTimeout(() => {
+                                el.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-ping mr-1.5"></span> Đồng Bộ Trực Tiếp';
+                            }, 2000);
+                        });
+                    }
+                }
+            } catch (err) {
+                console.warn('Cloud sync fetch notice:', err);
+            }
+        }
+
+        function applyCloudData(cloudData) {
+            let changed = false;
+
+            // 1. Đồng bộ lượt thả tim (Likes)
+            if (cloudData.likes) {
+                for (let i = 1; i <= 4; i++) {
+                    const cloudLikes = cloudData.likes[String(i)] ?? cloudData.likes[i];
+                    if (cloudLikes !== undefined && Number(cloudLikes) > (GROUPS_DATA[i].likes || 0)) {
+                        GROUPS_DATA[i].likes = Number(cloudLikes);
+                        changed = true;
+                    }
+                }
+            }
+
+            // 2. Đồng bộ danh sách bình luận (Reviews)
+            if (cloudData.reviews) {
+                for (let i = 1; i <= 4; i++) {
+                    const cloudReviews = cloudData.reviews[String(i)] ?? cloudData.reviews[i] ?? [];
+                    if (Array.isArray(cloudReviews) && cloudReviews.length > 0) {
+                        if (!GROUPS_DATA[i].reviews) GROUPS_DATA[i].reviews = [];
+                        const existingComments = new Set(GROUPS_DATA[i].reviews.map(r => r.comment.trim()));
+                        let newAdded = false;
+                        cloudReviews.forEach(cr => {
+                            if (cr.comment && !existingComments.has(cr.comment.trim())) {
+                                GROUPS_DATA[i].reviews.unshift(cr);
+                                existingComments.add(cr.comment.trim());
+                                newAdded = true;
+                            }
+                        });
+                        if (newAdded) changed = true;
+                    }
+                }
+            }
+
+            if (changed) {
+                if (typeof renderGalleryTimeline === 'function') {
+                    renderGalleryTimeline();
+                }
+                if (currentModalPosterGroupId && document.getElementById('exhibition-poster-modal') && !document.getElementById('exhibition-poster-modal').classList.contains('hidden')) {
+                    const pCountEl = document.getElementById('poster-modal-likes-count');
+                    if (pCountEl) pCountEl.textContent = GROUPS_DATA[currentModalPosterGroupId].likes || 0;
+                    if (typeof renderPosterModalReviewsList === 'function') {
+                        renderPosterModalReviewsList(currentModalPosterGroupId);
+                    }
+                }
+                if (selectedReviewGroup && document.getElementById('peer-review-modal') && !document.getElementById('peer-review-modal').classList.contains('hidden')) {
+                    const countEl = document.getElementById('modal-like-count');
+                    if (countEl) countEl.textContent = GROUPS_DATA[selectedReviewGroup].likes || 0;
+                    if (typeof renderModalReviewsList === 'function') {
+                        renderModalReviewsList(GROUPS_DATA[selectedReviewGroup]);
+                    }
+                }
+            }
+        }
+
+        async function pushCloudInteraction(type, groupId, data) {
+            try {
+                CLOUD_SYNC_CONFIG.isSyncing = true;
+                let payloadData = { likes: {}, reviews: {} };
+                try {
+                    const res = await fetch(CLOUD_SYNC_CONFIG.endpoint);
+                    if (res.ok) {
+                        const cloudObj = await res.json();
+                        payloadData = cloudObj.data || { likes: {}, reviews: {} };
+                    }
+                } catch(e) {}
+
+                if (!payloadData.likes) payloadData.likes = {};
+                if (!payloadData.reviews) payloadData.reviews = {};
+                if (!payloadData.reviews[String(groupId)]) payloadData.reviews[String(groupId)] = [];
+
+                if (type === 'like') {
+                    const currentLikes = Number(payloadData.likes[String(groupId)] || GROUPS_DATA[groupId].likes || 0);
+                    payloadData.likes[String(groupId)] = currentLikes + 1;
+                    GROUPS_DATA[groupId].likes = payloadData.likes[String(groupId)];
+                } else if (type === 'comment') {
+                    payloadData.reviews[String(groupId)].unshift(data);
+                    if (!GROUPS_DATA[groupId].reviews) GROUPS_DATA[groupId].reviews = [];
+                    const exists = GROUPS_DATA[groupId].reviews.some(r => r.comment.trim() === data.comment.trim());
+                    if (!exists) {
+                        GROUPS_DATA[groupId].reviews.unshift(data);
+                    }
+                }
+
+                // Gửi cập nhật lên máy chủ đám mây
+                await fetch(CLOUD_SYNC_CONFIG.endpoint, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: 'LICHSU8_LIVE_SYNC_V1',
+                        data: payloadData
+                    })
+                });
+
+                if (typeof renderGalleryTimeline === 'function') {
+                    renderGalleryTimeline();
+                }
+                if (currentModalPosterGroupId && typeof renderPosterModalReviewsList === 'function') {
+                    renderPosterModalReviewsList(currentModalPosterGroupId);
+                }
+            } catch (err) {
+                console.error('Lỗi gửi cập nhật lên đám mây:', err);
+            } finally {
+                CLOUD_SYNC_CONFIG.isSyncing = false;
+            }
+        }
+
         function addPosterQuickTag(tagText) {
             const input = document.getElementById('poster-modal-comment-input');
             if (!input) return;
