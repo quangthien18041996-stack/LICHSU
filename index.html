@@ -1132,6 +1132,19 @@
                 </button>
             </div>
 
+            
+            <!-- Poster Artwork & Heritage Banner -->
+            <div class="relative rounded-2xl overflow-hidden border-2 border-amber-500/70 shadow-2xl bg-black">
+                <img id="modal-poster-img" src="" alt="Poster Lịch Sử" class="w-full h-56 sm:h-72 object-cover object-center">
+                <div class="absolute top-3 left-3 bg-black/80 backdrop-blur px-3 py-1 rounded-lg border border-amber-500/50 text-[11px] text-amber-300 font-bold flex items-center gap-1.5 shadow">
+                    <i class="fa-solid fa-flag text-red-500"></i> <span id="modal-poster-group-name">NHÓM 1</span> • TRANH DI SẢN SỬ THI
+                </div>
+                <div class="absolute bottom-3 left-3 right-3 bg-gradient-to-t from-black via-black/80 to-transparent p-3 pt-6 rounded-b-xl flex items-center justify-between text-xs">
+                    <span class="text-amber-200 font-mono text-[11px]">Tác giả: <strong id="modal-poster-authors" class="text-amber-300">...</strong></span>
+                    <span class="text-stone-300 text-[11px] font-serif italic" id="modal-poster-time-tag"></span>
+                </div>
+            </div>
+
             <!-- Modal Content Preview -->
             <div class="space-y-4 text-xs">
                 <div class="grid grid-cols-2 gap-3 p-3 rounded-xl bg-stone-950 border border-stone-800">
@@ -1545,7 +1558,10 @@
                     setTimeout(() => selectActiveGroup(targetGroup), 150);
                 }
                 if (reviewGroup && reviewGroup >= 1 && reviewGroup <= 4) {
-                    setTimeout(() => openPeerReviewModal(reviewGroup), 350);
+                    switchTab('gallery');
+                    setTimeout(() => {
+                        openPeerReviewModal(reviewGroup);
+                    }, 250);
                 }
             } catch (e) {
                 console.warn('URL params parsing notice:', e);
@@ -2172,8 +2188,8 @@ function switchTab(tabId) {
                 targetUrl = baseUrl;
                 label = "Trang chủ bài học (Toàn bộ hoạt động)";
             } else {
-                targetUrl = `${baseUrl}?tab=workspaces&nhom=${target}`;
-                label = `Không gian thực hành: Nhóm ${target}`;
+                targetUrl = `${baseUrl}?tab=gallery&review=${target}`;
+                label = `Poster, Thả Tim & Bình Luận: Nhóm ${target}`;
             }
 
             const svgBox = document.getElementById('classroom-qr-svg-box');
@@ -2226,7 +2242,7 @@ function switchTab(tabId) {
             for (let i = 1; i <= 4; i++) {
                 const g = GROUPS_DATA[i];
                 const isApproved = (g.status === 'approved');
-                const qrPayload = `${getBaseAppUrl()}?tab=workspaces&nhom=${i}`;
+                const qrPayload = `${getBaseAppUrl()}?tab=gallery&review=${i}`;
                 const reviewCount = g.reviews ? g.reviews.length : 0;
                 const likesCount = g.likes || 0;
 
@@ -2415,7 +2431,7 @@ function switchTab(tabId) {
             let html = '';
             for (let i = 1; i <= 4; i++) {
                 const g = GROUPS_DATA[i];
-                const qrPayload = `${getBaseAppUrl()}?tab=workspaces&nhom=${i}`;
+                const qrPayload = `${getBaseAppUrl()}?tab=gallery&review=${i}`;
                 const reviewCount = g.reviews ? g.reviews.length : 0;
                 const likesCount = g.likes || 0;
                 const posterImgSrc = g.posterImg || g.mapImg || `images/hero_slide_${i}.jpg?v=epic`;
@@ -2552,7 +2568,7 @@ function switchTab(tabId) {
                             <!-- Bottom QR Code & Author Credits -->
                             <div class="pt-3 border-t border-amber-900/40 flex items-center justify-between gap-3">
                                 <div class="flex items-center gap-3">
-                                    <div class="bg-white p-1.5 rounded-xl border-2 border-amber-400 shadow-md shrink-0 cursor-pointer" onclick="openPosterDetailModal(${i})" title="Bấm để xem phóng to poster">
+                                    <div class="bg-white p-1.5 rounded-xl border-2 border-amber-400 shadow-md shrink-0 cursor-pointer" onclick="openPeerReviewModal(${i})" title="Quét hoặc Bấm để Thả Tim & Bình Luận cho nhóm">
                                         ${generateQRCodeSVG(qrPayload, 62)}
                                     </div>
                                     <div>
@@ -2859,6 +2875,17 @@ Poster Triển Lãm Lịch Sử và Mã QR của nhóm đã được tạo hoàn
             document.getElementById('modal-role').textContent = g.quangTrungRole || 'Đang hoàn thiện đánh giá';
             document.getElementById('modal-like-count').textContent = g.likes;
 
+            // Set poster image & authors in review modal
+            const posterImgSrc = g.posterImg || g.mapImg || `images/hero_slide_${groupId}.jpg?v=epic`;
+            const pImgEl = document.getElementById('modal-poster-img');
+            if (pImgEl) pImgEl.src = posterImgSrc;
+            const pNameEl = document.getElementById('modal-poster-group-name');
+            if (pNameEl) pNameEl.textContent = g.name.toUpperCase();
+            const pAuthEl = document.getElementById('modal-poster-authors');
+            if (pAuthEl) pAuthEl.textContent = g.members || 'Tập thể học sinh nhóm';
+            const pTimeEl = document.getElementById('modal-poster-time-tag');
+            if (pTimeEl) pTimeEl.textContent = `Mốc: ${g.time || '1771 - 1789'}`;
+
             // Audio player in modal
             const audioContainer = document.getElementById('modal-audio-container');
             const audioBadge = document.getElementById('modal-audio-badge');
@@ -2903,6 +2930,17 @@ Poster Triển Lãm Lịch Sử và Mã QR của nhóm đã được tạo hoàn
             if (g) {
                 g.likes += 1;
                 document.getElementById('modal-like-count').textContent = g.likes;
+
+            // Set poster image & authors in review modal
+            const posterImgSrc = g.posterImg || g.mapImg || `images/hero_slide_${groupId}.jpg?v=epic`;
+            const pImgEl = document.getElementById('modal-poster-img');
+            if (pImgEl) pImgEl.src = posterImgSrc;
+            const pNameEl = document.getElementById('modal-poster-group-name');
+            if (pNameEl) pNameEl.textContent = g.name.toUpperCase();
+            const pAuthEl = document.getElementById('modal-poster-authors');
+            if (pAuthEl) pAuthEl.textContent = g.members || 'Tập thể học sinh nhóm';
+            const pTimeEl = document.getElementById('modal-poster-time-tag');
+            if (pTimeEl) pTimeEl.textContent = `Mốc: ${g.time || '1771 - 1789'}`;
                 saveGroupData(false);
                 updateTeacherDashboard();
                 generateAllQRCodes();
@@ -4495,6 +4533,9 @@ Poster Triển Lãm Lịch Sử và Mã QR của nhóm đã được tạo hoàn
                 </div>
 
                 <div class="flex items-center gap-2">
+                    <button onclick="closePosterDetailModal(); openPeerReviewModal(currentModalPosterGroupId)" class="cursor-pointer px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white border border-rose-400 text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-rose-950/40 transform hover:scale-105">
+                        <i class="fa-solid fa-heart"></i> <span>Thả Tim & Bình Luận</span>
+                    </button>
                     <button onclick="printCurrentPosterModal()" class="cursor-pointer px-3 py-1.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-200 hover:text-white border border-stone-700 text-xs font-bold transition flex items-center gap-1.5 shadow">
                         <i class="fa-solid fa-print text-amber-400"></i> <span class="hidden sm:inline">In Poster</span>
                     </button>
