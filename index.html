@@ -135,21 +135,27 @@
             transform: rotateY(180deg);
         }
 
-        /* --- CINEMATIC 3D FLOATING THEATER STYLES --- */
+        /* --- CINEMATIC 3D FLOATING THEATER STYLES (MƯỢT MÀ 60FPS) --- */
         @keyframes kenBurnsZoom {
             0% {
                 transform: scale(1) translate(0, 0);
             }
             50% {
-                transform: scale(1.04) translate(-0.4%, -0.4%);
+                transform: scale(1.05) translate(-0.3%, -0.2%);
             }
             100% {
-                transform: scale(1.07) translate(0.4%, -0.2%);
+                transform: scale(1.08) translate(0.3%, -0.2%);
             }
         }
         .cinema-floating-img {
-            animation: kenBurnsZoom 13s ease-in-out infinite alternate;
-            will-change: transform;
+            animation: kenBurnsZoom 20s ease-in-out infinite alternate;
+            will-change: transform, opacity;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .cinema-crossfade {
+            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         @keyframes floatGlowPulse {
             0%, 100% {
@@ -1563,6 +1569,7 @@
 
         // --- 2. INITIALIZATION ON LOAD ---
         window.addEventListener('DOMContentLoaded', () => {
+            preloadAllHeroImages();
             loadFromLocalStorage();
             renderActiveGroupForm(1);
             generateAllQRCodes();
@@ -1647,16 +1654,17 @@
             const counter = document.getElementById('hero-artwork-counter');
             
             if (img) {
-                img.style.opacity = '0.25';
-                img.style.transform = 'scale(0.98)';
+                img.style.transition = 'opacity 0.8s ease-in-out, transform 0.8s ease-in-out';
+                img.style.opacity = '0.35';
+                img.style.transform = 'scale(0.99)';
                 setTimeout(() => {
                     img.src = item.src;
                     img.style.opacity = '1';
                     img.style.transform = 'scale(1)';
-                }, 180);
+                }, 150);
             }
             if (badge) badge.textContent = item.badge;
-            if (title) title.innerHTML = `<i class=\"fa-solid fa-monument text-amber-400\"></i> ${item.title}`;
+            if (title) title.innerHTML = `<i class="fa-solid fa-monument text-amber-400"></i> ${item.title}`;
             if (desc) desc.textContent = item.desc;
             if (ambient) ambient.src = item.src;
             if (counter) counter.textContent = `${index + 1}/${heroArtworks.length}`;
@@ -4066,31 +4074,63 @@ Poster Triển Lãm Lịch Sử và Mã QR của nhóm đã được tạo hoàn
             }
         }
 
+        let currentCinemaBuffer = 1; // 1 hoặc 2 đang hiển thị
+
+        function preloadAllHeroImages() {
+            if (!heroArtworks || !heroArtworks.length) return;
+            heroArtworks.forEach(item => {
+                const img = new Image();
+                img.src = item.src;
+            });
+        }
+
         function updateCinemaModalUI(index) {
             const item = heroArtworks[index];
             if (!item) return;
 
-            const cImg = document.getElementById('cinema-img');
-            const cAmbient = document.getElementById('cinema-ambient-bg');
+            const img1 = document.getElementById('cinema-img-1');
+            const img2 = document.getElementById('cinema-img-2');
+            const amb1 = document.getElementById('cinema-ambient-bg-1');
+            const amb2 = document.getElementById('cinema-ambient-bg-2');
+
+            if (img1 && img2) {
+                // Dual-buffer cross-fade: Ảnh mới tải sẵn vào lớp ẩn, rồi hòa tan 1.2s cực kỳ êm dịu
+                const activeImg = currentCinemaBuffer === 1 ? img1 : img2;
+                const nextImg = currentCinemaBuffer === 1 ? img2 : img1;
+                const activeAmb = currentCinemaBuffer === 1 ? amb1 : amb2;
+                const nextAmb = currentCinemaBuffer === 1 ? amb2 : amb1;
+
+                // Nạp src cho lớp chuẩn bị hiện
+                nextImg.src = item.src;
+                if (nextAmb) nextAmb.src = item.src;
+
+                // Kích hoạt hòa tan mượt mà
+                requestAnimationFrame(() => {
+                    nextImg.style.opacity = '1';
+                    activeImg.style.opacity = '0';
+                    if (nextAmb) nextAmb.style.opacity = '0.55';
+                    if (activeAmb) activeAmb.style.opacity = '0';
+                });
+
+                // Đảo buffer
+                currentCinemaBuffer = currentCinemaBuffer === 1 ? 2 : 1;
+            } else {
+                const fallbackImg = document.getElementById('cinema-img');
+                if (fallbackImg) {
+                    fallbackImg.style.transition = 'opacity 0.8s ease-in-out';
+                    fallbackImg.style.opacity = '0.4';
+                    setTimeout(() => {
+                        fallbackImg.src = item.src;
+                        fallbackImg.style.opacity = '1';
+                    }, 120);
+                }
+            }
+
             const cBadge = document.getElementById('cinema-badge');
             const cTitle = document.getElementById('cinema-title');
             const cDesc = document.getElementById('cinema-desc');
             const cCounter = document.getElementById('cinema-counter');
 
-            if (cImg) {
-                cImg.style.opacity = '0.2';
-                cImg.style.transform = 'scale(0.96)';
-                setTimeout(() => {
-                    cImg.src = item.src;
-                    cImg.style.opacity = '1';
-                    cImg.style.transform = 'scale(1)';
-                    // Re-trigger Ken Burns animation
-                    cImg.classList.remove('cinema-floating-img');
-                    void cImg.offsetWidth;
-                    cImg.classList.add('cinema-floating-img');
-                }, 180);
-            }
-            if (cAmbient) cAmbient.src = item.src;
             if (cBadge) cBadge.textContent = item.badge;
             if (cTitle) cTitle.innerHTML = `<i class="fa-solid fa-monument text-amber-400"></i> ${item.title}`;
             if (cDesc) cDesc.textContent = item.desc;
@@ -4534,9 +4574,10 @@ Poster Triển Lãm Lịch Sử và Mã QR của nhóm đã được tạo hoàn
     <!-- CINEMATIC HERO THEATER (CHIẾU NỔI 3D SỐNG ĐỘNG - KHÔNG ĐÓNG KHUNG THÔ) -->
     <!-- ========================================== -->
     <div id="hero-cinema-modal" class="fixed inset-0 z-[120] bg-[#070504] hidden items-center justify-center overflow-hidden transition-all duration-700 animate-fade">
-        <!-- 1. Ambient Background Glow (Tràn viền tỏa sáng theo màu tranh) -->
+        <!-- 1. Ambient Background Glow (Tràn viền tỏa sáng hòa tan theo màu tranh) -->
         <div class="absolute inset-0 pointer-events-none overflow-hidden">
-            <img id="cinema-ambient-bg" src="images/hero_slide_1.jpg?v=epic" class="w-full h-full object-cover filter blur-[95px] opacity-55 scale-125 transition-all duration-1000">
+            <img id="cinema-ambient-bg-1" src="images/hero_slide_1.jpg?v=epic" class="absolute inset-0 w-full h-full object-cover filter blur-[95px] opacity-55 scale-125 transition-opacity duration-1000 ease-in-out">
+            <img id="cinema-ambient-bg-2" src="images/hero_slide_2.jpg?v=epic" class="absolute inset-0 w-full h-full object-cover filter blur-[95px] opacity-0 scale-125 transition-opacity duration-1000 ease-in-out">
             <div class="absolute inset-0 bg-radial-gradient from-transparent via-[#070504]/50 to-[#070504]/90"></div>
         </div>
 
@@ -4575,8 +4616,11 @@ Poster Triển Lãm Lịch Sử và Mã QR của nhóm đã được tạo hoàn
         <div class="relative z-20 w-full h-full flex items-center justify-center p-3 sm:p-8 pt-16 pb-24 sm:pb-28">
             <div class="relative max-w-6xl w-full max-h-[75vh] flex items-center justify-center">
                 <!-- Outer floating glow frame with subtle breathing 3D effect -->
-                <div class="relative w-auto h-auto max-h-[73vh] max-w-full rounded-2xl sm:rounded-3xl overflow-hidden cinema-stage-glow">
-                    <img id="cinema-img" src="images/hero_slide_1.jpg?v=epic" alt="Chiến Thắng Kỷ Dậu" class="w-auto h-auto max-h-[73vh] max-w-full object-contain rounded-2xl sm:rounded-3xl cinema-floating-img border border-amber-400/40 shadow-[0_30px_90px_rgba(0,0,0,0.95)]">
+                <div class="relative w-auto h-auto max-h-[73vh] max-w-full rounded-2xl sm:rounded-3xl overflow-hidden cinema-stage-glow flex items-center justify-center">
+                    <!-- Layer 1 -->
+                    <img id="cinema-img-1" src="images/hero_slide_1.jpg?v=epic" alt="Chiến Thắng Kỷ Dậu" class="w-auto h-auto max-h-[73vh] max-w-full object-contain rounded-2xl sm:rounded-3xl cinema-floating-img cinema-crossfade border border-amber-400/40 shadow-[0_30px_90px_rgba(0,0,0,0.95)] opacity-100">
+                    <!-- Layer 2 (Dual Buffer để hòa tan chuyển cảnh tuyệt đối mượt) -->
+                    <img id="cinema-img-2" src="images/hero_slide_2.jpg?v=epic" alt="Chiến Thắng Kỷ Dậu" class="absolute inset-0 m-auto w-auto h-auto max-h-[73vh] max-w-full object-contain rounded-2xl sm:rounded-3xl cinema-floating-img cinema-crossfade border border-amber-400/40 shadow-[0_30px_90px_rgba(0,0,0,0.95)] opacity-0 pointer-events-none">
                 </div>
 
 
