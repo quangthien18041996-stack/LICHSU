@@ -236,9 +236,7 @@
                 <button onclick="switchTab('gallery')" id="nav-gallery" class="nav-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 flex items-center gap-2 text-stone-300 hover:text-amber-300 hover:bg-stone-800/60">
                     <i class="fa-solid fa-timeline"></i> Triển Lãm & Dòng Thời Gian
                 </button>
-                <button onclick="switchTab('qr-hub')" id="nav-qr-hub" class="nav-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 flex items-center gap-2 text-stone-300 hover:text-amber-300 hover:bg-stone-800/60">
-                    <i class="fa-solid fa-qrcode text-amber-400"></i> Quét QR Trải Nghiệm Chéo
-                </button>
+                
             </nav>
             <!-- Quick Feature Actions -->
             <div class="hidden lg:flex items-center gap-2.5">
@@ -262,7 +260,7 @@
             <button onclick="switchTab('portal')" class="mobile-nav-btn px-3 py-1.5 rounded-lg whitespace-nowrap font-medium text-amber-300 bg-amber-950/80">Tổng quan</button>
             <button onclick="switchTab('workspaces')" class="mobile-nav-btn px-3 py-1.5 rounded-lg whitespace-nowrap font-medium text-stone-400">4 Nhóm</button>
             <button onclick="switchTab('gallery')" class="mobile-nav-btn px-3 py-1.5 rounded-lg whitespace-nowrap font-medium text-stone-400">Triển lãm</button>
-            <button onclick="switchTab('qr-hub')" class="mobile-nav-btn px-3 py-1.5 rounded-lg whitespace-nowrap font-medium text-stone-400">Mã QR</button>
+            
             
             <button type="button" onclick="openPresentationSuite(1)" class="cursor-pointer mobile-nav-btn px-3 py-1.5 rounded-lg whitespace-nowrap font-bold text-amber-300 bg-stone-800"><i class="fa-solid fa-tv mr-1"></i>Trình Chiếu</button>
         </div>
@@ -455,8 +453,8 @@
                             <button onclick="switchTab('workspaces')" class="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-500 text-stone-950 font-black text-sm uppercase tracking-wider flex items-center gap-2 hover:shadow-xl hover:shadow-amber-500/40 transition transform hover:-translate-y-0.5 border border-yellow-300/40">
                                 <i class="fa-solid fa-users text-base"></i> Vào Không Gian 4 Nhóm
                             </button>
-                            <button onclick="switchTab('qr-hub')" class="px-6 py-3 rounded-xl bg-stone-900/90 hover:bg-stone-800 text-amber-300 border border-amber-500/50 font-bold text-sm flex items-center gap-2 transition hover:shadow-lg hover:shadow-amber-900/30">
-                                <i class="fa-solid fa-qrcode text-lg text-amber-400"></i> Quét Mã Trải Nghiệm Chéo
+                            <button onclick="switchTab('gallery')" class="px-6 py-3 rounded-xl bg-stone-900/90 hover:bg-stone-800 text-amber-300 border border-amber-500/50 font-bold text-sm flex items-center justify-center gap-2 transition hover:shadow-lg hover:shadow-amber-900/30">
+                                <i class="fa-solid fa-timeline text-lg text-amber-400"></i> Xem Triển Lãm & Dòng Thời Gian
                             </button>
                         </div>
 
@@ -952,64 +950,7 @@
 
         <!-- ========================================== -->
         <!-- TAB 4: MÃ QR TRẢI NGHIỆM CHÉO (QR HUB) -->
-        <!-- ========================================== -->
-        <section id="tab-qr-hub" class="space-y-8 hidden animate-fade">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-amber-800/40">
-                <div>
-                    <h3 class="text-2xl sm:text-3xl font-black font-cinzel text-amber-200 flex items-center gap-3">
-                        <i class="fa-solid fa-qrcode text-amber-500"></i> TRẠM MÃ QR: TRẢI NGHIỆM CHÉO & ĐÁNH GIÁ ĐỒNG ĐẲNG
-                    </h3>
-                    <p class="text-xs sm:text-sm text-stone-400 mt-1">
-                        Dùng điện thoại hoặc máy tính bảng quét mã QR bên dưới để xem trực tiếp sản phẩm của nhóm bạn và chấm điểm Rubric
-                    </p>
-                </div>
-            </div>
-
-            <!-- Teacher Moderation Status Banner in QR Hub -->
-            <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-red-950/70 via-stone-900 to-amber-950/70 border border-amber-600/50 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl">
-                <div class="space-y-1">
-                    <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[11px] font-bold border border-amber-500/40 uppercase">
-                        <i class="fa-solid fa-shield-halved text-amber-400"></i> Cơ Chế Kiểm Duyệt Sư Phạm
-                    </div>
-                    <h4 class="text-sm sm:text-base font-bold text-amber-200">
-                        Chỉ Xuất Bản Mã QR Khi Giáo Viên Phê Duyệt Đạt Chuẩn
-                    </h4>
-                    <p class="text-xs text-stone-300 leading-relaxed">
-                        Sau khi nhóm hoàn thiện nội dung và được Giáo viên kiểm duyệt sử liệu + ghi âm, hệ thống sẽ tự động xuất bản Mã QR để các nhóm khác quét trải nghiệm và ghi lại cảm nhận.
-                    </p>
-                </div>
-                <div class="flex items-center gap-2.5 flex-wrap">
-                    <button onclick="approveAllGroups()" class="px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs flex items-center gap-2 shadow-lg transition">
-                        <i class="fa-solid fa-check-double text-emerald-200"></i> Phê Duyệt Cả 4 Nhóm
-                    </button>
-                    <button onclick="switchTab('teacher')" class="px-3.5 py-2.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-amber-300 text-xs border border-amber-600/40 transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-sliders"></i> Chi Tiết Kiểm Duyệt
-                    </button>
-                </div>
-            </div>
-
-            <!-- Dynamic 4 QR Cards Grid (Rendered based on Teacher Approval Status) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="qr-cards-grid">
-                <!-- Injected dynamically by generateAllQRCodes() -->
-            </div>
-
-            <!-- QR Reader & Instruction helper -->
-            <div class="card-tayson rounded-2xl p-6 border border-stone-800 flex flex-col md:flex-row items-center justify-between gap-6">
-                <div class="space-y-2 max-w-xl">
-                    <h4 class="text-base font-bold text-amber-300 flex items-center gap-2">
-                        <i class="fa-solid fa-mobile-screen-button"></i> Hướng Dẫn Trải Nghiệm Trên Điện Thoại & Máy Tính Bảng:
-                    </h4>
-                    <p class="text-xs text-stone-300 leading-relaxed">
-                        Học sinh mở camera điện thoại hoặc ứng dụng Zalo/Google Lens quét mã QR của nhóm bạn để mở trang trải nghiệm. Nếu thiết bị không có camera, học sinh có thể nhấn nút <strong class="text-amber-400">"Mở Trực Tiếp & Chấm Điểm"</strong> ngay trên máy tính bàn để đánh giá.
-                    </p>
-                </div>
-                <div class="flex items-center gap-3">
-                    <button onclick="printQRCodes()" class="px-4 py-2.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-amber-300 border border-amber-600/40 text-xs font-bold flex items-center gap-2 transition">
-                        <i class="fa-solid fa-print"></i> In 4 Mã QR Ra Giấy
-                    </button>
-                </div>
-            </div>
-        </section>
+        
 
         <!-- ========================================== -->
         <!-- TAB 5: BẢNG TỔNG HỢP & ĐÁNH GIÁ CỦA GV -->
@@ -1739,7 +1680,7 @@
         
 function switchTab(tabId) {
             // Hide all tab sections
-            const tabs = ['portal', 'workspaces', 'gallery', 'qr-hub', 'teacher'];
+            const tabs = ['portal', 'workspaces', 'gallery', 'teacher'];
             tabs.forEach(t => {
                 const el = document.getElementById(`tab-${t}`);
                 if (el) el.classList.add('hidden');
@@ -1764,7 +1705,7 @@ function switchTab(tabId) {
             // If switching to gallery or teacher, refresh views
             if (tabId === 'gallery') renderGalleryTimeline();
             if (tabId === 'teacher') updateTeacherDashboard();
-            if (tabId === 'qr-hub') generateAllQRCodes();
+            
         }
 
         // --- 4. SELECT & RENDER GROUP WORKSPACE ---
@@ -2079,7 +2020,7 @@ function switchTab(tabId) {
                             <p class="text-[11px] text-stone-300 mt-0.5">${data.teacherFeedback ? `Lời nhận xét của GV: "${data.teacherFeedback}"` : 'Sản phẩm đã đạt chuẩn sử liệu và sẵn sàng triển lãm.'}</p>
                         </div>
                     </div>
-                    <button type="button" onclick="switchTab('qr-hub')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-stone-950 font-black text-xs transition whitespace-nowrap">
+                    <button type="button" onclick="switchTab('gallery')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-stone-950 font-black text-xs transition whitespace-nowrap">
                         <i class="fa-solid fa-qrcode mr-1"></i> Xem Mã QR
                     </button>
                 `;
