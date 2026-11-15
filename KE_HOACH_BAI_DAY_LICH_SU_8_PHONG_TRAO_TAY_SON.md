@@ -1,6 +1,6 @@
 # KẾ HOẠCH BÀI DẠY (GIÁO ÁN ĐỔI MỚI SỐ HÓA)
 ## BÀI 8: PHONG TRÀO TÂY SƠN (1771 – 1789)
-**Môn học:** Lịch sử và Địa lí 8 (Bộ sách Cánh Diều – Phân môn Lịch sử)  
+**Môn học:** Lịch sử và Địa lí 8 (Bộ sách Kết nối tri thức với cuộc sống – Phân môn Lịch sử)  
 **Thời lượng thực hiện:** 02 tiết (90 phút)  
 **Định dạng chuẩn:** Công văn số 5512/BGDĐT-GDTrH của Bộ Giáo dục và Đào tạo  
 **Nền tảng học tập số tích hợp:** *“Hào Khí Tây Sơn (1771 – 1789) – Không Gian Học Tập Số & Trải Nghiệm Tương Tác”*  
@@ -13,7 +13,7 @@
 ### 1. Về năng lực
 
 #### a) Năng lực Lịch sử:
-* **Tìm hiểu lịch sử:** Khai thác tư liệu số đa phương tiện trên nền tảng web (Cinema Slideshow 10 tác phẩm tranh điện ảnh 3D, âm nhạc hào hùng Hào khí Việt Nam, giọng đọc lời hiệu triệu Quang Trung, lược đồ tương tác các trận đánh lớn, nguồn tư liệu văn bản SGK Cánh Diều) để xử lý dữ liệu và xây dựng sản phẩm học tập.
+* **Tìm hiểu lịch sử:** Khai thác tư liệu số đa phương tiện trên nền tảng web (Cinema Slideshow 10 tác phẩm tranh điện ảnh 3D, âm nhạc hào hùng Hào khí Việt Nam, giọng đọc lời hiệu triệu Quang Trung, lược đồ tương tác các trận đánh lớn, nguồn tư liệu văn bản SGK Kết nối tri thức với cuộc sống) để xử lý dữ liệu và xây dựng sản phẩm học tập.
 * **Nhận thức và tư duy lịch sử theo 4 nhóm chuyên đề:**
   * **Nhóm 1:** Trình bày được nguyên nhân bùng nổ phong trào Tây Sơn, xây dựng căn cứ Tây Sơn thượng đạo, hạ đạo, thu hút lực lượng và quá trình 4 lần tiến quân lật đổ chính quyền chúa Nguyễn ở Đàng Trong (1771 – 1777).
   * **Nhóm 2:** Phân tích được bối cảnh, diễn biến quyết liệt và nghệ thuật quân sự tài tình (nghi binh, mai phục thủy chiến sông Tiền) trong chiến thắng Rạch Gầm – Xoài Mút đánh tan 5 vạn quân Xiêm (1785).
@@ -22,7 +22,7 @@
 * **Vận dụng kiến thức, kĩ năng:** Đánh giá khách quan, toàn diện vai trò lịch sử của phong trào Tây Sơn và công lao vĩ đại của người anh hùng áo vải cờ đào Quang Trung – Nguyễn Huệ.
 
 #### b) Năng lực chung:
-* **Tự chủ và tự học:** Tự giác nghiên cứu nguồn học liệu số tích hợp, phân tích tài liệu SGK Cánh Diều và tra cứu tư liệu lịch sử.
+* **Tự chủ và tự học:** Tự giác nghiên cứu nguồn học liệu số tích hợp, phân tích tài liệu SGK Kết nối tri thức với cuộc sống và tra cứu tư liệu lịch sử.
 * **Giao tiếp và hợp tác:** Làm việc nhóm hiệu quả, tương tác số bình chọn, đánh giá đồng đẳng (Peer Review) công khai trên nền tảng web.
 * **Năng lực công nghệ thông tin:** Khai thác nền tảng web học tập số, quét mã QR chuẩn quốc tế ISO/IEC 18004, tham gia bình chọn và bình luận đám mây thời gian thực (Realtime Cloud Sync).
 
@@ -39,12 +39,12 @@
 * Nền tảng học tập số trực tuyến: [https://lichsu-eight.vercel.app/](https://lichsu-eight.vercel.app/) gồm 3 phân hệ cốt lõi:
   * **Phân hệ 1 (Tab 🎬 Phim tư liệu & Tổng quan):** Cinema Slideshow 10 tác phẩm điện ảnh 60fps, âm nhạc Hào khí Việt Nam, lời hiệu triệu Quang Trung, tổng quan 4 mốc son chói lọi.
   * **Phân hệ 2 (Tab 🏛️ Triển lãm Poster Di sản & Dòng thời gian):** 4 Poster Infographic nghệ thuật Trống đồng Đông Sơn, Thuyết minh âm thanh Voice HD, Thử thách bí ẩn sử liệu, Mã QR tương tác trực tiếp từng Poster, Hệ thống Realtime Cloud Sync tiếp nhận tim và bình luận trực tiếp.
-  * **Phân hệ 3 (Tab 💻 Không gian làm việc nhóm):** Biểu mẫu số 4 nhóm, Tư liệu SGK Cánh Diều, Lược đồ số trận đánh, Câu hỏi định hướng, Thử thách Mật mã lịch sử riêng từng nhóm, Bảng điều khiển kiểm duyệt sư phạm của GV (Teacher Moderation Dashboard) và Nút xuất báo cáo tiết học.
+  * **Phân hệ 3 (Tab 💻 Không gian làm việc nhóm):** Biểu mẫu số 4 nhóm, Tư liệu SGK Kết nối tri thức với cuộc sống, Lược đồ số trận đánh, Câu hỏi định hướng, Thử thách Mật mã lịch sử riêng từng nhóm, Bảng điều khiển kiểm duyệt sư phạm của GV (Teacher Moderation Dashboard) và Nút xuất báo cáo tiết học.
 * Nút **`📱 QR Vào Lớp`** màu vàng trên thanh tiêu đề phóng to mã QR toàn lớp cho học sinh truy cập nhanh.
 
 ### 2. Học sinh:
 * Thiết bị thông minh của nhóm (Điện thoại thông minh/Máy tính bảng/Laptop) có kết nối Wifi/4G, có camera quét mã QR (hoặc ứng dụng Zalo).
-* Sách giáo khoa Lịch sử và Địa lí 8 (Cánh Diều), bút, phiếu ghi chép cá nhân.
+* Sách giáo khoa Lịch sử và Địa lí 8 (Kết nối tri thức với cuộc sống), bút, phiếu ghi chép cá nhân.
 
 ---
 
@@ -68,7 +68,7 @@
   * **Kết luận:** GV nhận xét, giới thiệu 4 mốc son chói lọi của phong trào Tây Sơn và chuyển tiếp vào Hoạt động hình thành kiến thức.
 
 #### 2. HOẠT ĐỘNG 2: HÌNH THÀNH KIẾN THỨC – KHÁM PHÁ VÀ XÂY DỰNG SẢN PHẨM NHÓM TRÊN KHÔNG GIAN SỐ (35 phút)
-* **a) Mục tiêu:** Học sinh tự lực khai thác tư liệu SGK Cánh Diều và lược đồ số tương tác, làm chủ kiến thức của 4 mốc son lịch sử, giải mã thử thách bí ẩn sử học và hoàn thành biểu mẫu số của nhóm.
+* **a) Mục tiêu:** Học sinh tự lực khai thác tư liệu SGK Kết nối tri thức với cuộc sống và lược đồ số tương tác, làm chủ kiến thức của 4 mốc son lịch sử, giải mã thử thách bí ẩn sử học và hoàn thành biểu mẫu số của nhóm.
 * **b) Nội dung:** Khai thác Tab `💻 Không gian làm việc nhóm` với 4 chuyên đề tương ứng 4 nhóm:
   * **Nhóm 1:** Khởi nghĩa bùng nổ, căn cứ Tây Sơn thượng đạo và lật đổ chúa Nguyễn ở Đàng Trong (1771 – 1777).
   * **Nhóm 2:** Kháng chiến chống quân Xiêm – Thủy chiến Rạch Gầm – Xoài Mút (1785).
@@ -78,7 +78,7 @@
 * **d) Tổ chức thực hiện:**
   * **Bước 1 (Giao việc – 3 phút):** GV yêu cầu đại diện các nhóm dùng điện thoại/máy tính truy cập Tab Không gian nhóm (hoặc quét mã QR nhóm trên máy chiếu). Chọn đúng tab của nhóm mình.
   * **Bước 2 (HS làm việc nhóm – 25 phút):**
-    * HS đọc bảng Nhiệm vụ trọng tâm, nghiên cứu Đoạn trích tư liệu SGK Cánh Diều tích hợp sẵn, quan sát Lược đồ trận đánh (Nhóm 1, 2, 4) và thảo luận trả lời câu hỏi định hướng.
+    * HS đọc bảng Nhiệm vụ trọng tâm, nghiên cứu Đoạn trích tư liệu SGK Kết nối tri thức với cuộc sống tích hợp sẵn, quan sát Lược đồ trận đánh (Nhóm 1, 2, 4) và thảo luận trả lời câu hỏi định hướng.
     * Nhóm điền các trường dữ liệu trên web: Nhập tên nhóm, danh sách thành viên, đặt khẩu hiệu hành động, tóm tắt diễn biến cốt lõi, phân tích nghệ thuật tác chiến và nêu vai trò của người anh hùng Quang Trung.
     * **GIẢI THỬ THÁCH MẬT MÃ LỊCH SỬ ĐỘC QUYỀN:** Nhóm đọc câu đố bí ẩn lịch sử của nhóm mình trên web, cùng nhau tra cứu tư liệu để tìm ra *"Từ khóa mật mã"* và ghi vào bài nộp để nhận điểm thưởng sáng tạo.
     * Nhóm rà soát nội dung và bấm nút: **"GỬI BÀI CHO GIÁO VIÊN KIỂM DUYỆT"**.
@@ -137,7 +137,7 @@
 
 | Tiêu chí đánh giá | Xuất sắc (9 – 10 điểm) | Khá (7 – 8 điểm) | Đạt (5 – 6 điểm) | Cần cố gắng (< 5 điểm) |
 | :--- | :--- | :--- | :--- | :--- |
-| **1. Tính chuẩn xác & Sử liệu SGK** | Sử liệu chuẩn xác 100% theo SGK Cánh Diều; phân tích đầy đủ thời gian, địa bàn, người chỉ huy; khai thác sâu sắc lược đồ trận đánh. | Sử liệu đúng theo SGK, nêu đủ các mốc chính; có liên hệ lược đồ nhưng phân tích chưa sâu. | Nêu được cơ bản diễn biến nhưng còn sơ sài; thiếu sót một vài chi tiết lịch sử nhỏ. | Sai sót về mốc thời gian hoặc diễn biến; chưa bám sát nội dung tư liệu SGK. |
+| **1. Tính chuẩn xác & Sử liệu SGK** | Sử liệu chuẩn xác 100% theo SGK Kết nối tri thức với cuộc sống; phân tích đầy đủ thời gian, địa bàn, người chỉ huy; khai thác sâu sắc lược đồ trận đánh. | Sử liệu đúng theo SGK, nêu đủ các mốc chính; có liên hệ lược đồ nhưng phân tích chưa sâu. | Nêu được cơ bản diễn biến nhưng còn sơ sài; thiếu sót một vài chi tiết lịch sử nhỏ. | Sai sót về mốc thời gian hoặc diễn biến; chưa bám sát nội dung tư liệu SGK. |
 | **2. Phân tích Nghệ thuật Quân sự & Vai trò Quang Trung** | Làm nổi bật nét độc đáo, tài tình của nghệ thuật tác chiến Tây Sơn; đánh giá sâu sắc, thuyết phục công lao của Nguyễn Huệ – Quang Trung. | Nêu được nghệ thuật tác chiến và vai trò của Quang Trung nhưng lập luận chưa thật sâu sắc. | Liệt kê được chiến thuật nhưng chưa phân tích được nét độc đáo; đánh giá vai trò Quang Trung còn chung chung. | Chưa chỉ ra được nghệ thuật quân sự; đánh giá sơ sài hoặc sai lệch vai trò nhân vật. |
 | **3. Sản phẩm Poster & Thuyết trình** | Poster bố cục hoàng gia ấn tượng, khẩu hiệu truyền cảm hứng mạnh mẽ; thuyết trình tự tin, mạch lạc, lôi cuốn toàn lớp. | Poster rõ ràng, đủ nội dung; thuyết trình rõ ràng, đúng thời gian quy định. | Poster trình bày đơn giản; thuyết trình còn phụ thuộc tài liệu, giọng đọc đều đều. | Poster thiếu thông tin; thuyết trình ấp úng, quá giờ quy định. |
 | **4. Tương tác số, Giải Mật mã & Đánh giá đồng đẳng** | Giải đúng 100% Mật mã lịch sử của nhóm; tích cực tham gia quét mã QR, thả tim và đóng góp các bình luận sâu sắc, mang tính xây dựng. | Giải đúng Mật mã lịch sử; tham gia quét mã QR thả tim và bình luận cho nhóm bạn. | Giải được mật mã nhưng cần gợi ý; có tham gia thả tim nhưng bình luận còn ngắn ngủi. | Chưa giải được Mật mã lịch sử; ít tham gia tương tác bình chọn trên nền tảng web. |
