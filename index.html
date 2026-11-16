@@ -920,6 +920,9 @@
                 </div>
             </div>
 
+            <!-- Publication Progress Banner Container (Placed OUTSIDE timeline to prevent vertical line overlap) -->
+            <div id="gallery-progress-banner-container" class="mb-6"></div>
+
             <!-- Timeline visualization -->
             <div class="relative py-8">
                 <!-- Center vertical line for desktop -->
@@ -2428,9 +2431,11 @@ function switchTab(tabId) {
                 if (GROUPS_DATA[i] && GROUPS_DATA[i].status === 'approved') approvedCount++;
             }
 
-            let html = `
+            const bannerBox = document.getElementById('gallery-progress-banner-container');
+            if (bannerBox) {
+                bannerBox.innerHTML = `
             <!-- Publication Progress Banner -->
-            <div class="mb-8 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-stone-900/95 via-[#18110e] to-stone-900/95 border-2 border-amber-600/50 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="mb-2 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-stone-900/95 via-[#18110e] to-stone-900/95 border-2 border-amber-600/50 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div class="flex items-center gap-3.5">
                     <span class="w-11 h-11 rounded-2xl bg-gradient-to-br from-red-600 to-amber-500 text-yellow-200 border border-amber-400/60 flex items-center justify-center font-black text-lg shadow-lg shrink-0">
                         <i class="fa-solid fa-stamp"></i>
@@ -2465,8 +2470,10 @@ function switchTab(tabId) {
                     </button>`}
                 </div>
             </div>
-            `;
+                `;
+            }
 
+            let html = '';
             for (let i = 1; i <= 4; i++) {
                 const g = GROUPS_DATA[i];
                 const isApproved = (g && g.status === 'approved');
