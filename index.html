@@ -2173,7 +2173,7 @@ function switchTab(tabId) {
                 targetUrl = baseUrl;
                 label = "Trang chủ bài học (Toàn bộ hoạt động)";
             } else {
-                targetUrl = `${baseUrl}?poster=${target}`;
+                targetUrl = `${baseUrl}?poster=${target}#poster-${target}`;
                 label = `Poster, Thả Tim & Bình Luận: Nhóm ${target}`;
             }
 
@@ -2242,7 +2242,7 @@ function switchTab(tabId) {
                                 </span>
                             </div>
 
-                            <div class="bg-white p-3 rounded-2xl inline-block shadow-lg mx-auto ${groupBorderColors[i]} border-4 relative group cursor-pointer" onclick="openPeerReviewModal(${i})" title="Bấm để mở trải nghiệm ngay">
+                            <div class="bg-white p-3 rounded-2xl inline-block shadow-lg mx-auto ${groupBorderColors[i]} border-4 relative group cursor-pointer" onclick="openPosterDetailModal(${i})" title="Bấm để mở trải nghiệm ngay">
                                 ${generateQRCodeSVG(qrPayload, 140)}
                                 <div class="text-[9px] text-stone-600 font-mono mt-1 text-center font-bold">Quét Camera / Zalo</div>
                             </div>
@@ -2259,7 +2259,7 @@ function switchTab(tabId) {
                                 <span class="text-rose-400"><i class="fa-solid fa-heart mr-1"></i> <strong>${likesCount}</strong> tim</span>
                             </div>
 
-                            <button onclick="openPeerReviewModal(${i})" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-500 hover:opacity-90 text-stone-950 text-xs font-black transition flex items-center justify-center gap-2 shadow-lg shadow-amber-950/40">
+                            <button onclick="openPosterDetailModal(${i})" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-500 hover:opacity-90 text-stone-950 text-xs font-black transition flex items-center justify-center gap-2 shadow-lg shadow-amber-950/40">
                                 <i class="fa-solid fa-comments"></i> Trải Nghiệm & Ghi Cảm Nhận
                             </button>
                         </div>
@@ -2566,10 +2566,10 @@ function switchTab(tabId) {
                                 </div>
 
                                 <div class="flex items-center gap-2">
-                                    <span class="text-xs text-rose-400 font-semibold mr-1">
-                                        <i class="fa-solid fa-heart mr-1"></i> ${likesCount} tim
-                                    </span>
-                                    <button onclick="openPosterDetailModal(${i})" class="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold transition flex items-center gap-1.5">
+                                    <button type="button" onclick="likePosterDirectly(${i})" class="cursor-pointer px-2.5 py-1.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 text-xs font-bold transition flex items-center gap-1.5 active:scale-95 shadow-sm hover:shadow-rose-600/30" title="Bấm để thả tim trực tiếp">
+                                        <i class="fa-solid fa-heart text-rose-400 animate-pulse"></i> <span id="timeline-likes-count-${i}">${likesCount}</span> tim
+                                    </button>
+                                    <button type="button" onclick="openPosterDetailModal(${i})" class="cursor-pointer px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500/25 to-yellow-500/20 hover:from-amber-500/35 hover:to-yellow-500/30 text-amber-300 border border-amber-500/50 text-xs font-bold transition flex items-center gap-1.5 hover:scale-105 shadow-sm">
                                         <i class="fa-solid fa-comments"></i> Bình Luận & Tim
                                     </button>
                                 </div>
@@ -2686,10 +2686,19 @@ function switchTab(tabId) {
 
             try { playChiengDong(460, 1.2, 0.35); } catch(e) {}
 
+            // Sync quick likes in top ribbon
+            const quickLikesEl = document.getElementById('poster-modal-quick-likes');
+            if (quickLikesEl) quickLikesEl.textContent = g.likes || 0;
+
             modal.style.display = 'flex';
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             document.body.style.overflow = 'hidden';
+
+            // Reset scroll to top of modal
+            modal.scrollTop = 0;
+            const modalContentBox = modal.querySelector('.relative.max-w-4xl');
+            if (modalContentBox) modalContentBox.scrollTop = 0;
         }
 
         function closeMysteryChallengeModal() {
@@ -2783,7 +2792,7 @@ function switchTab(tabId) {
             document.getElementById('poster-modal-img').src = posterImgSrc;
 
             // Render SVG QR in modal
-            const qrPayload = `${getBaseAppUrl()}?tab=gallery&review=${groupId}`;
+            const qrPayload = `${getBaseAppUrl()}?poster=${groupId}#poster-${groupId}`;
             document.getElementById('poster-modal-qr-container').innerHTML = generateQRCodeSVG(qrPayload, 75);
 
             // Sync Voice button UI in modal
@@ -2800,29 +2809,81 @@ function switchTab(tabId) {
             const mSub = document.getElementById('poster-modal-mystery-subtitle');
             if (mSub) mSub.textContent = `Câu hỏi sử học độc quyền dành riêng cho ${g.name}`;
 
+            // Sync quick likes in top ribbon
+            const quickLikesEl = document.getElementById('poster-modal-quick-likes');
+            if (quickLikesEl) quickLikesEl.textContent = g.likes || 0;
+
             modal.style.display = 'flex';
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             document.body.style.overflow = 'hidden';
+
+            // Reset scroll to top of modal
+            modal.scrollTop = 0;
+            const modalContentBox = modal.querySelector('.relative.max-w-4xl');
+            if (modalContentBox) modalContentBox.scrollTop = 0;
         }
 
         
         // --- POSTER MODAL LIKE & COMMENT INTERACTION FUNCTIONS ---
         
         // =========================================================================
-        // REALTIME CLOUD SYNC ENGINE (ĐỒNG BỘ ĐÁM MÂY THỜI GIAN THỰC)
+        // RESILIENT REALTIME CLOUD SYNC ENGINE (ĐỒNG BỘ ĐÁM MÂY & MẠNG LỚP HỌC)
         // =========================================================================
         const CLOUD_SYNC_CONFIG = {
-            endpoint: 'https://api.restful-api.dev/objects/ff808181a09d98f701a1dad1d10c2aaf',
-            pollInterval: 3000,
+            endpoint: '/api/interactions',
+            fallbackEndpoint: 'https://lichsu-eight.vercel.app/api/interactions',
+            pollInterval: 5000,
             isSyncing: false
         };
+
+        // BroadcastChannel for instant local multi-tab & multi-window sync
+        let interactionsBroadcastChannel = null;
+        if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+            try {
+                interactionsBroadcastChannel = new BroadcastChannel('lichsu8_interactions_channel');
+                interactionsBroadcastChannel.onmessage = (event) => {
+                    if (event.data) {
+                        const { type, groupId, data, likes } = event.data;
+                        if (type === 'like' && groupId && GROUPS_DATA[groupId]) {
+                            if (likes && Number(likes) > (GROUPS_DATA[groupId].likes || 0)) {
+                                GROUPS_DATA[groupId].likes = Number(likes);
+                            } else {
+                                GROUPS_DATA[groupId].likes = (GROUPS_DATA[groupId].likes || 0) + 1;
+                            }
+                            applyLocalInteractionUpdate(groupId);
+                        } else if (type === 'comment' && groupId && data && GROUPS_DATA[groupId]) {
+                            if (!GROUPS_DATA[groupId].reviews) GROUPS_DATA[groupId].reviews = [];
+                            const exists = GROUPS_DATA[groupId].reviews.some(r => (r.comment || '').trim() === (data.comment || '').trim());
+                            if (!exists) {
+                                GROUPS_DATA[groupId].reviews.unshift(data);
+                                applyLocalInteractionUpdate(groupId);
+                            }
+                        }
+                    }
+                };
+            } catch (err) {
+                console.warn('BroadcastChannel init notice:', err);
+            }
+        }
+
+        function getCloudSyncEndpoint() {
+            if (typeof window !== 'undefined') {
+                const origin = window.location.origin || '';
+                if (!origin || origin.includes('localhost') || origin.includes('127.0.0.1') || origin.startsWith('file:') || origin === 'null') {
+                    return CLOUD_SYNC_CONFIG.fallbackEndpoint;
+                }
+            }
+            return CLOUD_SYNC_CONFIG.endpoint;
+        }
 
         async function fetchCloudInteractions(isManual = false) {
             if (CLOUD_SYNC_CONFIG.isSyncing) return;
             try {
-                const res = await fetch(CLOUD_SYNC_CONFIG.endpoint, {
-                    headers: { 'Accept': 'application/json' }
+                const endpoint = getCloudSyncEndpoint();
+                const res = await fetch(endpoint, {
+                    headers: { 'Accept': 'application/json' },
+                    cache: 'no-store'
                 });
                 if (!res.ok) return;
                 const json = await res.json();
@@ -2836,17 +2897,18 @@ function switchTab(tabId) {
                                 el.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-ping mr-1.5"></span> Đồng Bộ Trực Tiếp';
                             }, 2000);
                         });
+                        showToastNotification('✅ Dữ liệu thả tim & bình luận đã được đồng bộ trực tiếp!');
                     }
                 }
             } catch (err) {
-                console.warn('Cloud sync fetch notice:', err);
+                // Silently preserve local state
             }
         }
 
         function applyCloudData(cloudData) {
             let changed = false;
 
-            // 1. Đồng bộ lượt thả tim (Likes)
+            // 1. Đồng bộ lượt thả tim (Likes) - chỉ tăng, không bao giờ bị giảm
             if (cloudData.likes) {
                 for (let i = 1; i <= 4; i++) {
                     const cloudLikes = cloudData.likes[String(i)] ?? cloudData.likes[i];
@@ -2863,7 +2925,7 @@ function switchTab(tabId) {
                     const cloudReviews = cloudData.reviews[String(i)] ?? cloudData.reviews[i] ?? [];
                     if (Array.isArray(cloudReviews) && cloudReviews.length > 0) {
                         if (!GROUPS_DATA[i].reviews) GROUPS_DATA[i].reviews = [];
-                        const existingComments = new Set(GROUPS_DATA[i].reviews.map(r => r.comment.trim()));
+                        const existingComments = new Set(GROUPS_DATA[i].reviews.map(r => (r.comment || '').trim()));
                         let newAdded = false;
                         cloudReviews.forEach(cr => {
                             if (cr.comment && !existingComments.has(cr.comment.trim())) {
@@ -2878,75 +2940,146 @@ function switchTab(tabId) {
             }
 
             if (changed) {
-                if (typeof renderGalleryTimeline === 'function') {
-                    renderGalleryTimeline();
-                }
-                if (currentModalPosterGroupId && document.getElementById('exhibition-poster-modal') && !document.getElementById('exhibition-poster-modal').classList.contains('hidden')) {
+                saveToLocalStorage();
+                refreshAllInteractionViews();
+            }
+        }
+
+        function applyLocalInteractionUpdate(groupId) {
+            saveToLocalStorage();
+            refreshAllInteractionViews();
+        }
+
+        function refreshAllInteractionViews() {
+            if (typeof renderGalleryTimeline === 'function') {
+                renderGalleryTimeline();
+            }
+            if (currentModalPosterGroupId) {
+                const g = GROUPS_DATA[currentModalPosterGroupId];
+                if (g) {
                     const pCountEl = document.getElementById('poster-modal-likes-count');
-                    if (pCountEl) pCountEl.textContent = GROUPS_DATA[currentModalPosterGroupId].likes || 0;
-                    if (typeof renderPosterModalReviewsList === 'function') {
-                        renderPosterModalReviewsList(currentModalPosterGroupId);
-                    }
+                    if (pCountEl) pCountEl.textContent = g.likes || 0;
+                    const quickLikesEl = document.getElementById('poster-modal-quick-likes');
+                    if (quickLikesEl) quickLikesEl.textContent = g.likes || 0;
                 }
-                if (selectedReviewGroup && document.getElementById('peer-review-modal') && !document.getElementById('peer-review-modal').classList.contains('hidden')) {
-                    const countEl = document.getElementById('modal-like-count');
-                    if (countEl) countEl.textContent = GROUPS_DATA[selectedReviewGroup].likes || 0;
-                    if (typeof renderModalReviewsList === 'function') {
-                        renderModalReviewsList(GROUPS_DATA[selectedReviewGroup]);
-                    }
+                if (typeof renderPosterModalReviewsList === 'function') {
+                    renderPosterModalReviewsList(currentModalPosterGroupId);
                 }
+            }
+            for (let i = 1; i <= 4; i++) {
+                const tEl = document.getElementById(`timeline-likes-count-${i}`);
+                if (tEl && GROUPS_DATA[i]) tEl.textContent = GROUPS_DATA[i].likes || 0;
             }
         }
 
         async function pushCloudInteraction(type, groupId, data) {
             try {
                 CLOUD_SYNC_CONFIG.isSyncing = true;
-                let payloadData = { likes: {}, reviews: {} };
-                try {
-                    const res = await fetch(CLOUD_SYNC_CONFIG.endpoint);
-                    if (res.ok) {
-                        const cloudObj = await res.json();
-                        payloadData = cloudObj.data || { likes: {}, reviews: {} };
-                    }
-                } catch(e) {}
-
-                if (!payloadData.likes) payloadData.likes = {};
-                if (!payloadData.reviews) payloadData.reviews = {};
-                if (!payloadData.reviews[String(groupId)]) payloadData.reviews[String(groupId)] = [];
-
-                if (type === 'like') {
-                    const currentLikes = Number(payloadData.likes[String(groupId)] || GROUPS_DATA[groupId].likes || 0);
-                    payloadData.likes[String(groupId)] = currentLikes + 1;
-                    GROUPS_DATA[groupId].likes = payloadData.likes[String(groupId)];
-                } else if (type === 'comment') {
-                    payloadData.reviews[String(groupId)].unshift(data);
-                    if (!GROUPS_DATA[groupId].reviews) GROUPS_DATA[groupId].reviews = [];
-                    const exists = GROUPS_DATA[groupId].reviews.some(r => r.comment.trim() === data.comment.trim());
-                    if (!exists) {
-                        GROUPS_DATA[groupId].reviews.unshift(data);
-                    }
+                
+                // Broadcast to other tabs on the same device
+                if (interactionsBroadcastChannel) {
+                    try {
+                        interactionsBroadcastChannel.postMessage({
+                            type,
+                            groupId,
+                            data,
+                            likes: GROUPS_DATA[groupId]?.likes || 0,
+                            timestamp: Date.now()
+                        });
+                    } catch (e) {}
                 }
 
-                // Gửi cập nhật lên máy chủ đám mây
-                await fetch(CLOUD_SYNC_CONFIG.endpoint, {
-                    method: 'PUT',
+                const endpoint = getCloudSyncEndpoint();
+                const res = await fetch(endpoint, {
+                    method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        name: 'LICHSU8_LIVE_SYNC_V1',
-                        data: payloadData
+                        type,
+                        groupId,
+                        data,
+                        fullState: {
+                            likes: {
+                                1: GROUPS_DATA[1]?.likes || 0,
+                                2: GROUPS_DATA[2]?.likes || 0,
+                                3: GROUPS_DATA[3]?.likes || 0,
+                                4: GROUPS_DATA[4]?.likes || 0
+                            },
+                            reviews: {
+                                1: GROUPS_DATA[1]?.reviews || [],
+                                2: GROUPS_DATA[2]?.reviews || [],
+                                3: GROUPS_DATA[3]?.reviews || [],
+                                4: GROUPS_DATA[4]?.reviews || []
+                            }
+                        }
                     })
                 });
 
-                if (typeof renderGalleryTimeline === 'function') {
-                    renderGalleryTimeline();
-                }
-                if (currentModalPosterGroupId && typeof renderPosterModalReviewsList === 'function') {
-                    renderPosterModalReviewsList(currentModalPosterGroupId);
+                if (res.ok) {
+                    const json = await res.json();
+                    if (json && json.data) {
+                        applyCloudData(json.data);
+                    }
                 }
             } catch (err) {
-                console.error('Lỗi gửi cập nhật lên đám mây:', err);
+                console.warn('Network sync notice (local state preserved):', err);
             } finally {
                 CLOUD_SYNC_CONFIG.isSyncing = false;
+            }
+        }
+
+        function triggerHeartCelebration(groupId) {
+            try {
+                const container = document.body;
+                const heart = document.createElement('div');
+                heart.innerHTML = '<i class="fa-solid fa-heart text-rose-500 drop-shadow-[0_0_15px_rgba(244,63,94,0.95)]"></i> <span class="text-xs font-black text-rose-300 ml-1">+1</span>';
+                heart.style.position = 'fixed';
+                heart.style.left = '50%';
+                heart.style.top = '55%';
+                heart.style.transform = 'translate(-50%, -50%) scale(1)';
+                heart.style.fontSize = '30px';
+                heart.style.zIndex = '9999';
+                heart.style.pointerEvents = 'none';
+                heart.style.transition = 'all 0.85s cubic-bezier(0.2, 0.8, 0.2, 1)';
+                container.appendChild(heart);
+
+                requestAnimationFrame(() => {
+                    heart.style.top = '30%';
+                    heart.style.transform = 'translate(-50%, -50%) scale(1.6)';
+                    heart.style.opacity = '0';
+                });
+
+                setTimeout(() => {
+                    if (heart.parentNode) heart.parentNode.removeChild(heart);
+                }, 900);
+            } catch (e) {}
+        }
+
+        function showToastNotification(message) {
+            try {
+                let toast = document.getElementById('app-toast-notification');
+                if (!toast) {
+                    toast = document.createElement('div');
+                    toast.id = 'app-toast-notification';
+                    toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] max-w-md w-[92%] px-4 py-3 rounded-2xl bg-gradient-to-r from-stone-900 via-stone-850 to-stone-900 border-2 border-amber-500/80 shadow-[0_10px_35px_rgba(0,0,0,0.85)] text-amber-200 text-xs sm:text-sm font-semibold flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-4';
+                    document.body.appendChild(toast);
+                }
+                toast.innerHTML = `<span class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-base shrink-0 border border-amber-500/30"><i class="fa-solid fa-bell"></i></span><span>${message}</span>`;
+                toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+                toast.classList.add('opacity-100', 'translate-y-0');
+
+                setTimeout(() => {
+                    toast.classList.remove('opacity-100', 'translate-y-0');
+                    toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+                }, 3800);
+            } catch (e) {}
+        }
+
+        function scrollToPosterCommentBox() {
+            const box = document.getElementById('poster-modal-interaction-box');
+            if (box) {
+                box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                const input = document.getElementById('poster-modal-comment-input');
+                if (input) setTimeout(() => input.focus(), 350);
             }
         }
 
@@ -2961,28 +3094,62 @@ function switchTab(tabId) {
             input.focus();
         }
 
-        async function likePosterModalGroup() {
+        // 1-Click Like directly from Timeline Card
+        function likePosterDirectly(groupId) {
+            const g = GROUPS_DATA[groupId];
+            if (!g) return;
+
+            g.likes = (g.likes || 0) + 1;
+            saveToLocalStorage();
+
+            const countEl = document.getElementById(`timeline-likes-count-${groupId}`);
+            if (countEl) countEl.textContent = g.likes;
+
+            if (currentModalPosterGroupId === groupId) {
+                const modalCount = document.getElementById('poster-modal-likes-count');
+                if (modalCount) modalCount.textContent = g.likes;
+                const quickModalCount = document.getElementById('poster-modal-quick-likes');
+                if (quickModalCount) quickModalCount.textContent = g.likes;
+            }
+
+            triggerHeartCelebration(groupId);
+            showToastNotification(`💖 Đã thả tim cho ${g.name} (${g.likes} tim)!`);
+            pushCloudInteraction('like', groupId);
+        }
+
+        // Like from inside Poster Modal
+        function likePosterModalGroup() {
             const groupId = currentModalPosterGroupId;
             const g = GROUPS_DATA[groupId];
             if (!g) return;
 
             g.likes = (g.likes || 0) + 1;
+            saveToLocalStorage();
+
             const countEl = document.getElementById('poster-modal-likes-count');
             if (countEl) countEl.textContent = g.likes;
 
-            // Visual celebration
+            const quickCountEl = document.getElementById('poster-modal-quick-likes');
+            if (quickCountEl) quickCountEl.textContent = g.likes;
+
+            const timelineCountEl = document.getElementById(`timeline-likes-count-${groupId}`);
+            if (timelineCountEl) timelineCountEl.textContent = g.likes;
+
+            // Visual button pop animation
             const btn = document.getElementById('btn-like-poster-modal');
             if (btn) {
-                btn.classList.add('scale-115', 'shadow-rose-600/80');
-                setTimeout(() => btn.classList.remove('scale-115', 'shadow-rose-600/80'), 300);
+                btn.classList.add('scale-110', 'shadow-rose-600/80');
+                setTimeout(() => btn.classList.remove('scale-110', 'shadow-rose-600/80'), 250);
             }
 
-            renderGalleryTimeline();
-            // Sync to cloud
-            await pushCloudInteraction('like', groupId);
+            triggerHeartCelebration(groupId);
+            showToastNotification(`💖 Đã thả tim cho ${g.name}! Tổng cộng: ${g.likes} tim.`);
+
+            // Push to cloud in background
+            pushCloudInteraction('like', groupId);
         }
 
-        async function submitPosterModalReview() {
+        function submitPosterModalReview() {
             const groupId = currentModalPosterGroupId;
             const g = GROUPS_DATA[groupId];
             if (!g) return;
@@ -3003,20 +3170,19 @@ function switchTab(tabId) {
                 time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
             };
 
+            // Instant UI update (Zero-wait UX)
             if (!g.reviews) g.reviews = [];
             g.reviews.unshift(newReview);
+            saveToLocalStorage();
 
             if (input) input.value = '';
             renderPosterModalReviewsList(groupId);
-
-            const submitBtn = document.getElementById('btn-submit-poster-review');
-            if (submitBtn) submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Đang gửi...';
-
-            await pushCloudInteraction('comment', groupId, newReview);
-
-            if (submitBtn) submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane mr-1.5"></i> Gửi Bình Luận Lên Máy Chiếu';
-            alert(`🎉 Cảm ơn ${reviewerName} đã gửi lời bình phẩm! Bình luận đã được đồng bộ trực tiếp lên màn hình lớp học.`);
             renderGalleryTimeline();
+
+            showToastNotification(`🎉 Cảm ơn ${reviewerName} đã gửi lời bình phẩm! Bình luận đã được gửi lên màn hình lớp học.`);
+
+            // Push to cloud in background
+            pushCloudInteraction('comment', groupId, newReview);
         }
 
         function renderPosterModalReviewsList(groupId) {
@@ -3366,7 +3532,7 @@ Poster Triển Lãm Lịch Sử và Mã QR của nhóm đã được tạo hoàn
 
                     <!-- Action buttons -->
                     <div class="flex items-center justify-between gap-2 pt-2 border-t border-stone-800">
-                        <button onclick="openPeerReviewModal(${i})" class="px-2.5 py-1.5 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-300 text-[11px] font-semibold flex items-center gap-1 transition">
+                        <button onclick="openPosterDetailModal(${i})" class="px-2.5 py-1.5 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-300 text-[11px] font-semibold flex items-center gap-1 transition">
                             <i class="fa-solid fa-eye"></i> Xem Bài
                         </button>
                         <div class="flex items-center gap-1.5">
@@ -4626,11 +4792,6 @@ Poster Triển Lãm Lịch Sử và Mã QR của nhóm đã được tạo hoàn
                     if (typeof openPosterDetailModal === 'function') {
                         openPosterDetailModal(posterId);
                     }
-                    setTimeout(() => {
-                        if (typeof openPosterDetailModal === 'function') openPosterDetailModal(posterId);
-                        const el = document.getElementById(`poster-group-${posterId}`);
-                        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 250);
                     return true;
                 }
 
@@ -4856,13 +5017,16 @@ Poster Triển Lãm Lịch Sử và Mã QR của nhóm đã được tạo hoàn
                 </div>
 
                 <div class="flex items-center gap-2">
-                    <button onclick="closePosterDetailModal(); openPeerReviewModal(currentModalPosterGroupId)" class="cursor-pointer px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white border border-rose-400 text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-rose-950/40 transform hover:scale-105">
-                        <i class="fa-solid fa-heart"></i> <span>Thả Tim & Bình Luận</span>
+                    <button type="button" onclick="likePosterModalGroup()" class="cursor-pointer px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white border border-rose-400 text-xs font-black transition flex items-center gap-1.5 shadow-lg shadow-rose-950/40 transform active:scale-95">
+                        <i class="fa-solid fa-heart text-rose-200 animate-pulse"></i> <span>Thả Tim (<span id="poster-modal-quick-likes">0</span>)</span>
                     </button>
-                    <button onclick="printCurrentPosterModal()" class="cursor-pointer px-3 py-1.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-200 hover:text-white border border-stone-700 text-xs font-bold transition flex items-center gap-1.5 shadow">
+                    <button type="button" onclick="scrollToPosterCommentBox()" class="cursor-pointer px-3 py-1.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-amber-300 border border-amber-500/40 text-xs font-bold transition flex items-center gap-1.5 shadow">
+                        <i class="fa-solid fa-comments"></i> <span class="hidden sm:inline">Bình Luận</span>
+                    </button>
+                    <button type="button" onclick="printCurrentPosterModal()" class="cursor-pointer px-3 py-1.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-200 hover:text-white border border-stone-700 text-xs font-bold transition flex items-center gap-1.5 shadow">
                         <i class="fa-solid fa-print text-amber-400"></i> <span class="hidden sm:inline">In Poster</span>
                     </button>
-                    <button onclick="closePosterDetailModal()" class="cursor-pointer w-9 h-9 rounded-full bg-stone-900/80 hover:bg-red-900 text-stone-300 hover:text-white flex items-center justify-center transition border border-stone-700 hover:border-red-500 shadow">
+                    <button type="button" onclick="closePosterDetailModal()" class="cursor-pointer w-9 h-9 rounded-full bg-stone-900/80 hover:bg-red-900 text-stone-300 hover:text-white flex items-center justify-center transition border border-stone-700 hover:border-red-500 shadow">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
