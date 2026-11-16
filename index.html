@@ -2103,6 +2103,16 @@ function switchTab(tabId) {
             }
         }
 
+        function saveToLocalStorage() {
+            try {
+                if (typeof localStorage !== 'undefined') {
+                    localStorage.setItem('TAYSON_STUDENT_DATA_V2', JSON.stringify(GROUPS_DATA));
+                }
+            } catch (e) {
+                console.warn("Could not save to localStorage:", e);
+            }
+        }
+
         // --- 5. REAL ISO/IEC 18004 SCANNABLE QR CODE ENGINE ---
         function getBaseAppUrl() {
             let origin = window.location.origin;
@@ -3326,24 +3336,16 @@ Poster Triển Lãm Lịch Sử và Mã QR của nhóm đã được tạo hoàn
         }
 
         function likeCurrentGroup() {
-            const g = GROUPS_DATA[selectedReviewGroup];
+            const groupId = selectedReviewGroup || 1;
+            const g = GROUPS_DATA[groupId];
             if (g) {
-                g.likes += 1;
-                document.getElementById('modal-like-count').textContent = g.likes;
-
-            // Set poster image & authors in review modal
-            const posterImgSrc = g.posterImg || g.mapImg || `images/hero_slide_${groupId}.jpg?v=epic`;
-            const pImgEl = document.getElementById('modal-poster-img');
-            if (pImgEl) pImgEl.src = posterImgSrc;
-            const pNameEl = document.getElementById('modal-poster-group-name');
-            if (pNameEl) pNameEl.textContent = g.name.toUpperCase();
-            const pAuthEl = document.getElementById('modal-poster-authors');
-            if (pAuthEl) pAuthEl.textContent = g.members || 'Tập thể học sinh nhóm';
-            const pTimeEl = document.getElementById('modal-poster-time-tag');
-            if (pTimeEl) pTimeEl.textContent = `Mốc: ${g.time || '1771 - 1789'}`;
-                saveGroupData(false);
-                updateTeacherDashboard();
-                generateAllQRCodes();
+                g.likes = (g.likes || 0) + 1;
+                saveToLocalStorage();
+                const countEl = document.getElementById('modal-like-count');
+                if (countEl) countEl.textContent = g.likes;
+                triggerHeartCelebration(groupId);
+                showToastNotification(`💖 Đã thả tim cho ${g.name}! Tổng cộng: ${g.likes} tim.`);
+                pushCloudInteraction('like', groupId);
             }
         }
 
