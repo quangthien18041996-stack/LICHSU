@@ -1381,7 +1381,7 @@
                 audioData: "images/poster_audio_group_1.mp3",
                 posterAudio: "images/poster_audio_group_1.mp3",
                 posterImg: "images/hero_slide_3.jpg?v=epic",
-                status: "approved",
+                status: "pending",
                 teacherFeedback: "Bài làm rất xuất sắc! Sử liệu chuẩn xác, lược đồ phân tích sâu sắc, bản thu âm truyền cảm hào hùng. Đã phê duyệt và xuất bản Poster Mã QR.",
                 likes: 18,
                 score: 9.8,
@@ -1423,7 +1423,7 @@
                 audioData: "images/poster_audio_group_2.mp3",
                 posterAudio: "images/poster_audio_group_2.mp3",
                 posterImg: "images/hero_slide_2.jpg?v=epic",
-                status: "approved",
+                status: "pending",
                 teacherFeedback: "Phân tích trận địa sông Tiền tuyệt vời! Chiến thuật nghi binh và hỏa công được làm nổi bật rõ nét. Đã phê duyệt và xuất bản Poster.",
                 likes: 22,
                 score: 9.9,
@@ -1464,7 +1464,7 @@
                 audioData: "images/poster_audio_group_3.mp3",
                 posterAudio: "images/poster_audio_group_3.mp3",
                 posterImg: "images/hero_slide_4.jpg?v=epic",
-                status: "approved",
+                status: "pending",
                 teacherFeedback: "Sản phẩm tư duy logic, làm rõ được ý nghĩa chấm dứt chia cắt Đàng Trong - Đàng Ngoài. Đã phê duyệt và xuất bản Poster.",
                 likes: 19,
                 score: 9.7,
@@ -1503,7 +1503,7 @@
                 audioData: "images/poster_audio_group_4.mp3",
                 posterAudio: "images/poster_audio_group_4.mp3",
                 posterImg: "images/hero_slide_1.jpg?v=epic",
-                status: "approved",
+                status: "pending",
                 teacherFeedback: "Tác phẩm xuất sắc toàn diện! Tái hiện trọn vẹn hào khí mùa xuân Kỷ Dậu 1789. Đã phê duyệt và xuất bản Poster.",
                 likes: 35,
                 score: 10.0,
@@ -1915,7 +1915,7 @@ function switchTab(tabId) {
 
             // Save to LocalStorage
             try {
-                localStorage.setItem('TAYSON_STUDENT_DATA_V2', JSON.stringify(GROUPS_DATA));
+                localStorage.setItem('TAYSON_STUDENT_DATA_V3', JSON.stringify(GROUPS_DATA));
                 showSaveIndicator(true);
                 if (showNotification) {
                     alert(`Đã lưu dữ liệu bài làm của ${g.name} thành công!`);
@@ -1990,7 +1990,7 @@ function switchTab(tabId) {
 
             g.status = 'pending';
             try {
-                localStorage.setItem('TAYSON_STUDENT_DATA_V2', JSON.stringify(GROUPS_DATA));
+                localStorage.setItem('TAYSON_STUDENT_DATA_V3', JSON.stringify(GROUPS_DATA));
             } catch(e) {}
 
             renderActiveGroupForm(currentActiveGroup);
@@ -2086,7 +2086,7 @@ function switchTab(tabId) {
             try {
                 // Xóa cache cũ nếu có để đảm bảo form trống cho học sinh thực hành
                 localStorage.removeItem('TAYSON_DATA_V1');
-                const raw = localStorage.getItem('TAYSON_STUDENT_DATA_V2');
+                const raw = localStorage.getItem('TAYSON_STUDENT_DATA_V3');
                 if (raw) {
                     const parsed = JSON.parse(raw);
                     for (let i = 1; i <= 4; i++) {
@@ -2106,7 +2106,7 @@ function switchTab(tabId) {
         function saveToLocalStorage() {
             try {
                 if (typeof localStorage !== 'undefined') {
-                    localStorage.setItem('TAYSON_STUDENT_DATA_V2', JSON.stringify(GROUPS_DATA));
+                    localStorage.setItem('TAYSON_STUDENT_DATA_V3', JSON.stringify(GROUPS_DATA));
                 }
             } catch (e) {
                 console.warn("Could not save to localStorage:", e);
@@ -2423,15 +2423,60 @@ function switchTab(tabId) {
             const container = document.getElementById('gallery-timeline-container');
             if (!container) return;
 
-            let html = '';
+            let approvedCount = 0;
+            for (let i = 1; i <= 4; i++) {
+                if (GROUPS_DATA[i] && GROUPS_DATA[i].status === 'approved') approvedCount++;
+            }
+
+            let html = `
+            <!-- Publication Progress Banner -->
+            <div class="mb-8 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-stone-900/95 via-[#18110e] to-stone-900/95 border-2 border-amber-600/50 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex items-center gap-3.5">
+                    <span class="w-11 h-11 rounded-2xl bg-gradient-to-br from-red-600 to-amber-500 text-yellow-200 border border-amber-400/60 flex items-center justify-center font-black text-lg shadow-lg shrink-0">
+                        <i class="fa-solid fa-stamp"></i>
+                    </span>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h3 class="text-sm sm:text-base font-black font-cinzel text-amber-200 uppercase tracking-wider">
+                                TIẾN ĐỘ KIỂM DUYỆT & XUẤT BẢN TRIỂN LÃM
+                            </h3>
+                            <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full ${approvedCount === 4 ? 'bg-emerald-950 text-emerald-300 border border-emerald-500/60 shadow' : 'bg-amber-950 text-amber-300 border border-amber-500/50 animate-pulse'}">
+                                ${approvedCount}/4 Nhóm Đã Duyệt
+                            </span>
+                        </div>
+                        <p class="text-xs text-stone-300 mt-1 leading-relaxed">
+                            ${approvedCount === 4 
+                                ? '🎉 Tuyệt vời! Cả 4 mốc lịch sử đã được Giáo viên phê duyệt chuẩn mực và xuất bản trọn vẹn lên Triển lãm số.' 
+                                : 'Quy trình chuẩn: Học sinh hoàn thiện bài ở tab Không Gian Nhóm & nộp bài &rarr; Giáo viên kiểm duyệt nội dung &rarr; Tác phẩm chính thức lên Triển lãm & Dòng thời gian.'}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2.5 shrink-0 self-start md:self-center">
+                    <button type="button" onclick="switchTab('teacher')" class="cursor-pointer px-3.5 py-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-amber-300 border border-amber-500/40 text-xs font-bold transition flex items-center gap-1.5 shadow">
+                        <i class="fa-solid fa-chalkboard-user text-amber-400"></i> Bảng Duyệt GV
+                    </button>
+                    ${approvedCount < 4 ? `
+                    <button type="button" onclick="approveAllGroups()" class="cursor-pointer px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-stone-950 text-xs font-black transition flex items-center gap-1.5 shadow-lg transform active:scale-95">
+                        <i class="fa-solid fa-check-double"></i> Duyệt Nhanh Tất Cả
+                    </button>` : `
+                    <button type="button" onclick="resetClassData()" class="cursor-pointer px-3 py-1.5 rounded-xl bg-stone-900 hover:bg-red-950/80 text-stone-400 hover:text-red-300 border border-stone-800 hover:border-red-600/50 text-[11px] font-bold transition flex items-center gap-1">
+                        <i class="fa-solid fa-rotate-left"></i> Tiết Học Mới
+                    </button>`}
+                </div>
+            </div>
+            `;
+
             for (let i = 1; i <= 4; i++) {
                 const g = GROUPS_DATA[i];
+                const isApproved = (g && g.status === 'approved');
                 const qrPayload = `${getBaseAppUrl()}?poster=${i}#poster-${i}`;
                 const reviewCount = g.reviews ? g.reviews.length : 0;
                 const likesCount = g.likes || 0;
                 const posterImgSrc = g.posterImg || g.mapImg || `images/hero_slide_${i}.jpg?v=epic`;
 
-                html += `
+                if (isApproved) {
+                    html += `
                 <div id="poster-group-${i}" class="exhibition-poster tayson-royal-border relative rounded-3xl overflow-hidden border-2 border-amber-500/70 bg-gradient-to-b from-[#1a110e] via-[#130d0b] to-[#0b0807] shadow-[0_25px_70px_rgba(0,0,0,0.9)] hover:border-amber-400 hover:shadow-[0_30px_90px_rgba(245,158,11,0.3)] transition-all duration-500">
                     <!-- 4 Bronze Drum Sun Motifs (Họa tiết Trống đồng Đông Sơn 4 góc) -->
                     <svg class="absolute top-2.5 left-2.5 w-8 h-8 sm:w-10 sm:h-10 text-amber-500/80 pointer-events-none z-10 drop-shadow-[0_0_6px_rgba(245,158,11,0.6)]" viewBox="0 0 48 48" fill="none">
@@ -2466,74 +2511,47 @@ function switchTab(tabId) {
                     <div class="px-5 sm:px-8 py-3.5 bg-gradient-to-r from-red-950 via-stone-900 to-amber-950 border-b border-amber-700/50 flex flex-wrap items-center justify-between gap-3">
                         <div class="flex items-center gap-2.5">
                             <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-red-600 to-amber-500 flex items-center justify-center text-yellow-200 font-black text-sm border border-amber-400/50 shadow">
-                                <i class="fa-solid fa-flag"></i>
+                                <i class="fa-solid fa-scroll"></i>
                             </span>
                             <div>
-                                <span class="text-xs sm:text-sm font-black uppercase tracking-wider text-amber-300">
-                                    POSTER TRIỂN LÃM DI SẢN SỐ • ${g.name.toUpperCase()}
+                                <span class="text-xs font-black text-amber-300 uppercase tracking-widest flex items-center gap-2">
+                                    <span>POSTER DI SẢN SỐ • MỐC #${i}</span>
+                                    <span class="px-2 py-0.2 rounded-full bg-red-950 text-amber-400 border border-red-600/50 text-[10px]">${g.name.toUpperCase()}</span>
+                                    <span class="px-2 py-0.2 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/50 text-[10px] font-bold"><i class="fa-solid fa-check mr-1"></i>ĐÃ DUYỆT</span>
                                 </span>
-                                <span class="ml-2 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-red-900 text-amber-200 border border-red-500/40 shadow-inner">
-                                    MỐC: ${g.time || '1771 - 1789'}
-                                </span>
+                                <span class="text-[11px] text-stone-400 block">${g.time || '1771 - 1789'} • Phong trào Tây Sơn</span>
                             </div>
                         </div>
 
-                        <!-- Action tools on Poster -->
                         <div class="flex items-center gap-2">
-                            <!-- Nút Thách Thức Sử Liệu Nhanh -->
-                            <button type="button" onclick="openMysteryChallengeModal(${i})" class="cursor-pointer px-3 py-1.5 rounded-xl bg-gradient-to-r from-red-900 via-amber-900 to-red-950 hover:from-red-800 hover:to-amber-800 text-amber-200 hover:text-yellow-100 border border-amber-400/60 text-xs font-black transition flex items-center gap-1.5 shadow-[0_0_15px_rgba(245,158,11,0.35)] transform hover:scale-105" title="Khám phá câu hỏi bí ẩn sử liệu độc quyền của chiến dịch này">
-                                <i class="fa-solid fa-scroll text-yellow-400 animate-pulse"></i> <span>Bí Ẩn ${g.name}</span>
+                            <button type="button" onclick="openMysteryChallengeModal(${i})" class="cursor-pointer px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/50 text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                                <i class="fa-solid fa-puzzle-piece text-amber-400"></i> <span class="hidden sm:inline">Bí Ẩn Sử Liệu</span>
                             </button>
-                            <button onclick="openPosterDetailModal(${i})" class="cursor-pointer px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 hover:text-yellow-200 border border-amber-500/50 text-xs font-bold transition flex items-center gap-1.5 shadow" title="Phóng to poster độc bản">
-                                <i class="fa-solid fa-expand text-amber-400"></i> Phóng To Poster
-                            </button>
-                            <button onclick="printSinglePoster(${i})" class="cursor-pointer px-3 py-1.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-300 hover:text-white border border-stone-700 text-xs font-bold transition flex items-center gap-1.5 shadow" title="In / Tải poster này">
-                                <i class="fa-solid fa-print text-amber-400"></i> In
+                            <button type="button" onclick="openPosterDetailModal(${i})" class="cursor-pointer px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-stone-950 font-black text-xs transition flex items-center gap-1.5 shadow-lg shadow-amber-950/40 transform hover:scale-105">
+                                <i class="fa-solid fa-up-right-and-down-left-from-center"></i> Phóng To Poster
                             </button>
                         </div>
                     </div>
 
-                    <!-- Poster Body Grid -->
+                    <!-- Poster Main Showcase Grid -->
                     <div class="p-5 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-                        <!-- Left: Image Showcase & Audio Voice Player -->
-                        <div class="lg:col-span-5 relative group">
-                            <div class="relative rounded-2xl overflow-hidden border-2 border-amber-500/60 shadow-2xl bg-black">
-                                <img src="${posterImgSrc}" alt="${g.headline}" class="w-full h-56 sm:h-72 object-cover object-center transform group-hover:scale-105 transition-all duration-700 cursor-pointer" onclick="openPosterDetailModal(${i})" title="Bấm để xem poster phóng to chi tiết">
-                                
-                                <!-- Top Badge on Image -->
-                                <div class="absolute top-3 left-3 bg-black/80 backdrop-blur px-2.5 py-1 rounded-lg border border-amber-500/40 text-[10px] text-amber-300 font-bold flex items-center gap-1">
-                                    <i class="fa-solid fa-image"></i> Tranh Lịch Sử Sử Thi
-                                </div>
-
-                                <div class="absolute bottom-3 right-3 bg-black/80 backdrop-blur px-2.5 py-1 rounded-lg border border-amber-500/40 text-[10px] text-amber-200 font-semibold opacity-0 group-hover:opacity-100 transition">
-                                    <i class="fa-solid fa-magnifying-glass-plus"></i> Xem Chi Tiết
-                                </div>
-                            </div>
-
-                            <!-- Dedicated Voice Button on Poster -->
-                            <div class="mt-4 p-3 rounded-2xl bg-gradient-to-r from-red-950/90 via-stone-900 to-amber-950/90 border border-amber-500/50 shadow-lg">
-                                <div class="flex items-center justify-between gap-2">
-                                    <div class="flex items-center gap-2">
-                                        <span class="w-7 h-7 rounded-full bg-gradient-to-br from-red-600 to-amber-600 text-yellow-200 flex items-center justify-center text-xs shadow border border-amber-400/50">
-                                            <i class="fa-solid fa-headphones"></i>
-                                        </span>
-                                        <div>
-                                            <div class="text-[11px] font-bold text-amber-200 flex items-center gap-1.5">
-                                                <span>Thuyết Minh Hào Hùng</span>
-                                                <span class="text-[9px] px-1.5 py-0.2 rounded bg-red-950 border border-red-500/50 text-amber-300 font-mono">HD</span>
-                                            </div>
-                                            <div class="text-[9px] text-stone-400">Giọng đọc diễn cảm tích hợp</div>
-                                        </div>
-                                    </div>
-
-                                    <!-- The Interactive Voice Button -->
-                                    <button type="button" onclick="togglePosterVoice(${i})" id="btn-poster-voice-${i}" class="cursor-pointer px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 hover:from-amber-400 hover:to-yellow-300 text-stone-950 font-black text-xs flex items-center gap-1.5 shadow-md transition transform hover:scale-105">
-                                        <i id="icon-poster-voice-${i}" class="fa-solid fa-play"></i>
-                                        <span id="lbl-poster-voice-${i}">Nghe Giọng Đọc</span>
+                        <!-- Left: Huge Historical Artwork + Voice Player Overlay -->
+                        <div class="lg:col-span-5 relative group rounded-2xl overflow-hidden border border-amber-600/40 shadow-2xl bg-black">
+                            <img src="${posterImgSrc}" alt="${g.headline || g.topic}" class="w-full h-64 sm:h-80 object-cover object-center group-hover:scale-105 transition duration-700">
+                            
+                            <!-- Voice Player Bar on Artwork -->
+                            <div class="absolute bottom-3 left-3 right-3 bg-black/85 backdrop-blur-md p-2.5 rounded-xl border border-amber-500/40 flex items-center justify-between gap-3 shadow-lg">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <button type="button" onclick="togglePosterVoice(${i})" class="w-8 h-8 rounded-full bg-gradient-to-r from-red-600 to-amber-600 text-white flex items-center justify-center text-xs shadow hover:scale-110 transition shrink-0" title="Nghe bản thu âm lời kể lịch sử">
+                                        <i class="fa-solid fa-play" id="icon-poster-voice-${i}"></i>
                                     </button>
+                                    <div class="min-w-0">
+                                        <div class="text-[11px] font-bold text-amber-300 truncate" id="lbl-poster-voice-${i}">Bản Thu Âm Lời Kể</div>
+                                        <div class="text-[9px] text-stone-400 font-mono">Podcast thuyết minh lịch sử</div>
+                                    </div>
                                 </div>
-                                
-                                <audio id="audio-poster-voice-${i}" src="${g.posterAudio || g.audioData}" preload="none"></audio>
+                                <span class="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono font-bold shrink-0">HD Audio</span>
+                                <audio id="audio-poster-${i}" src="${g.serverAudio || g.audioData}" preload="none"></audio>
                             </div>
                         </div>
 
@@ -2587,7 +2605,60 @@ function switchTab(tabId) {
                         </div>
                     </div>
                 </div>
-                `;
+                    `;
+                } else {
+                    // Placeholder state when NOT approved
+                    html += `
+                <div id="poster-group-${i}" class="exhibition-poster relative rounded-3xl overflow-hidden border-2 border-dashed border-amber-700/50 bg-gradient-to-b from-[#16100e] via-[#0f0b0a] to-[#080605] p-6 sm:p-8 shadow-xl transition-all duration-300">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-stone-800">
+                        <div class="flex items-center gap-3">
+                            <span class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/30 flex items-center justify-center font-black text-sm">
+                                #${i}
+                            </span>
+                            <div>
+                                <h4 class="text-base sm:text-lg font-bold font-serif text-stone-200">
+                                    MỐC ${i}: ${g.time || '1771 - 1789'} • ${g.topic}
+                                </h4>
+                                <p class="text-xs text-amber-400 font-mono">Đảm nhiệm: ${g.name}</p>
+                            </div>
+                        </div>
+                        <div>
+                            ${g.status === 'pending' 
+                                ? '<span class="px-3 py-1.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/50 text-xs font-bold flex items-center gap-1.5 animate-pulse"><i class="fa-solid fa-clock"></i> Đã Nộp Bài • Chờ GV Phê Duyệt</span>'
+                                : g.status === 'revision'
+                                ? '<span class="px-3 py-1.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/50 text-xs font-bold flex items-center gap-1.5"><i class="fa-solid fa-rotate-left"></i> GV Yêu Cầu Chỉnh Sửa</span>'
+                                : '<span class="px-3 py-1.5 rounded-full bg-stone-800 text-stone-400 border border-stone-700 text-xs font-medium flex items-center gap-1.5"><i class="fa-solid fa-pen-nib"></i> Đang Biên Tập & Nghiên Cứu</span>'
+                            }
+                        </div>
+                    </div>
+
+                    <div class="py-8 text-center space-y-3">
+                        <div class="w-14 h-14 rounded-2xl bg-stone-900 border border-amber-600/30 flex items-center justify-center text-amber-400 mx-auto shadow-inner text-xl">
+                            ${g.status === 'pending' ? '<i class="fa-solid fa-hourglass-half text-amber-400 animate-spin"></i>' : '<i class="fa-solid fa-lock text-stone-500"></i>'}
+                        </div>
+                        <h5 class="text-sm font-bold text-stone-200">
+                            ${g.status === 'pending' 
+                                ? 'Sản phẩm đã nộp và đang chờ Giáo viên kiểm duyệt sư phạm' 
+                                : 'Nhóm đang thực hiện xây dựng sản phẩm học tập'}
+                        </h5>
+                        <p class="text-xs text-stone-400 max-w-lg mx-auto leading-relaxed">
+                            ${g.status === 'pending'
+                                ? `Bài làm của <strong>${g.name}</strong> đã được nộp lên hệ thống. Sau khi Giáo viên kiểm duyệt trong Bảng điều khiển, tác phẩm di sản số và mã QR sẽ chính thức xuất bản tại đây.`
+                                : `Học sinh nhóm ${i} đang hoàn thiện nội dung, nghệ thuật quân sự và ghi âm lời kể. Tác phẩm sẽ xuất bản sau khi được Giáo viên phê duyệt.`
+                            }
+                        </p>
+                        <div class="pt-3 flex flex-wrap items-center justify-center gap-3">
+                            <button type="button" onclick="selectGroupWorkspace(${i})" class="cursor-pointer px-4 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold transition flex items-center gap-2 shadow">
+                                <i class="fa-solid fa-pen-to-square"></i> Mở Không Gian ${g.name}
+                            </button>
+                            <button type="button" onclick="switchTab('teacher')" class="cursor-pointer px-4 py-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-300 border border-stone-700 text-xs font-semibold transition flex items-center gap-2">
+                                <i class="fa-solid fa-stamp text-amber-400"></i> Phê Duyệt Bài Này
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                    `;
+                }
             }
 
             container.innerHTML = html;
@@ -2783,7 +2854,14 @@ function switchTab(tabId) {
             const modal = document.getElementById('exhibition-poster-modal');
             if (!modal) return;
 
-            document.getElementById('poster-modal-badge').textContent = g.name.toUpperCase();
+            const badgeEl = document.getElementById('poster-modal-badge');
+            if (badgeEl) {
+                if (g.status === 'approved') {
+                    badgeEl.innerHTML = `${g.name.toUpperCase()} <span class="ml-1 text-[9px] px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/50">ĐÃ DUYỆT</span>`;
+                } else {
+                    badgeEl.innerHTML = `${g.name.toUpperCase()} <span class="ml-1 text-[9px] px-2 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-500/50 animate-pulse">CHỜ GV DUYỆT</span>`;
+                }
+            }
             document.getElementById('poster-modal-time').textContent = g.time || '1771 - 1789';
             document.getElementById('poster-modal-headline').innerHTML = formatHeadlineHTML(g.headline || g.topic, groupId);
             document.getElementById('poster-modal-slogan').textContent = `"${g.slogan || 'Hào khí Tây Sơn'}"`;
@@ -3251,7 +3329,7 @@ function switchTab(tabId) {
 
             g.status = 'approved';
             try {
-                localStorage.setItem('TAYSON_STUDENT_DATA_V2', JSON.stringify(GROUPS_DATA));
+                localStorage.setItem('TAYSON_STUDENT_DATA_V3', JSON.stringify(GROUPS_DATA));
             } catch(e) {}
 
             renderActiveGroupForm(currentActiveGroup);
@@ -3560,7 +3638,7 @@ Poster Triển Lãm Lịch Sử và Mã QR của nhóm đã được tạo hoàn
 
             g.status = 'approved';
             try {
-                localStorage.setItem('TAYSON_STUDENT_DATA_V2', JSON.stringify(GROUPS_DATA));
+                localStorage.setItem('TAYSON_STUDENT_DATA_V3', JSON.stringify(GROUPS_DATA));
             } catch(e) {}
 
             updateTeacherDashboard();
@@ -3578,7 +3656,7 @@ Poster Triển Lãm Lịch Sử và Mã QR của nhóm đã được tạo hoàn
             g.teacherFeedback = note || 'Giáo viên yêu cầu kiểm tra lại độ chính xác của sử liệu và hoàn thiện diễn biến.';
             g.status = 'revision';
             try {
-                localStorage.setItem('TAYSON_STUDENT_DATA_V2', JSON.stringify(GROUPS_DATA));
+                localStorage.setItem('TAYSON_STUDENT_DATA_V3', JSON.stringify(GROUPS_DATA));
             } catch(e) {}
 
             updateTeacherDashboard();
@@ -3595,7 +3673,7 @@ Poster Triển Lãm Lịch Sử và Mã QR của nhóm đã được tạo hoàn
                     if (!g.teacherFeedback) g.teacherFeedback = "Đạt yêu cầu chuẩn mực.";
                 }
                 try {
-                    localStorage.setItem('TAYSON_STUDENT_DATA_V2', JSON.stringify(GROUPS_DATA));
+                    localStorage.setItem('TAYSON_STUDENT_DATA_V3', JSON.stringify(GROUPS_DATA));
                 } catch(e) {}
                 updateTeacherDashboard();
                 renderGalleryTimeline();
@@ -3643,7 +3721,7 @@ Poster Triển Lãm Lịch Sử và Mã QR của nhóm đã được tạo hoàn
         function resetClassData() {
             if (confirm("Bạn có chắc muốn đặt lại toàn bộ dữ liệu ban đầu (xóa sạch bài làm của các nhóm) để bắt đầu tiết học mới không?")) {
                 localStorage.removeItem('TAYSON_DATA_V1');
-                localStorage.removeItem('TAYSON_STUDENT_DATA_V2');
+                localStorage.removeItem('TAYSON_STUDENT_DATA_V3');
                 location.reload();
             }
         }
