@@ -139,13 +139,13 @@ tbl_gv.alignment = WD_TABLE_ALIGNMENT.CENTER
 tbl_gv.autofit = False
 
 gv_info = [
-    ('Họ và tên giáo viên:', '[Điền họ và tên giáo viên, ví dụ: NGUYỄN VĂN A]'),
-    ('Năm sinh / Giới tính:', '[Năm sinh, ví dụ: 1996]   |   Giới tính: [Nam / Nữ]'),
+    ('Họ và tên giáo viên:', 'NGUYỄN ĐỨC AN'),
+    ('Năm sinh / Giới tính:', '1990   |   Giới tính: Nam'),
     ('Bộ môn đăng ký dự thi:', 'Lịch sử và Địa lí (Phân môn Lịch sử 8 - Cấp THCS)'),
-    ('Thâm niên công tác:', '[Điền số năm, ví dụ: 06 năm giảng dạy môn Lịch sử THCS]'),
-    ('Tên đơn vị công tác:', '[Điền tên trường, ví dụ: Trường THCS ..., TP. Hồ Chí Minh]'),
-    ('Số điện thoại liên lạc cá nhân:', '[Điền số điện thoại: 09xx xxx xxx]'),
-    ('Địa chỉ thư điện tử (Email):', '[Điền email liên hệ, ví dụ: giaovien@hcm.edu.vn]')
+    ('Thâm niên công tác:', '10 năm giảng dạy môn Lịch sử THCS'),
+    ('Tên đơn vị công tác:', 'Trường Liên cấp TH - THCS Nguyễn Quốc Phú'),
+    ('Số điện thoại liên lạc cá nhân:', '0972020819'),
+    ('Địa chỉ thư điện tử (Email):', 'anndnqp@tu.sgdbinhduong.edu.vn')
 ]
 
 for idx, (lbl, val) in enumerate(gv_info):
@@ -661,11 +661,10 @@ r = p_sr.add_run('(Ký và ghi rõ họ tên)\n\n\n\n\n\n')
 r.font.name = 'Times New Roman'
 r.font.size = Pt(10)
 r.italic = True
-r = p_sr.add_run('[Điền họ và tên giáo viên]')
+r = p_sr.add_run('Nguyễn Đức An')
 r.font.name = 'Times New Roman'
 r.font.size = Pt(11)
 r.bold = True
-r.font.color.rgb = RGBColor(192, 0, 0)
 
 # Remove borders for signature table
 for cell in (c_sleft, c_sright):
@@ -675,6 +674,6 @@ for cell in (c_sleft, c_sright):
                     left={'val': 'none'}, 
                     right={'val': 'none'})
 
-output_path = r'docs/ho_so_hoi_thi/Folder_1_Phan_tong_quan/Lichsu_THCS_[Ho-Va-Ten]_STEM_P1.docx'
+output_path = r'docs/ho_so_hoi_thi/Folder_1_Phan_tong_quan/Lichsu_THCS_Nguyen-Duc-An_STEM_P1.docx'
 doc.save(output_path)
 print('Document generated successfully at:', output_path)
