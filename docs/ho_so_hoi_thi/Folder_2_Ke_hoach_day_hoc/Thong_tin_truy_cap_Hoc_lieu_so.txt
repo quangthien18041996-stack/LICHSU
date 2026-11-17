@@ -1,0 +1,17 @@
+THÔNG TIN TRUY CẬP VÀ TRẢI NGHIỆM HỌC LIỆU SỐ DỰ THI
+CHỦ ĐỀ: HÀO KHÍ TÂY SƠN (1771 - 1789) - THIÊN TÀI QUÂN SỰ QUANG TRUNG
+Môn: Lịch sử và Địa lí 8 (Bộ sách Kết nối tri thức với cuộc sống - Phân môn Lịch sử)
+
+1. ĐỊA CHỈ TRUY CẬP TRỰC TUYẾN (ONLINE):
+- Link Website ứng dụng trực tiếp: https://lichsu-eight.vercel.app/
+- Link dự phòng (GitHub Mirror): https://quangthien18041996-stack.github.io/LICHSU/
+
+2. ĐẶC ĐIỂM KỸ THUẬT NỔI BẬT:
+- Ứng dụng Single Page Application (SPA), hoạt động hoàn hảo trên mọi thiết bị (Máy tính bàn, Laptop, Máy chiếu tương tác, Máy tính bảng, Điện thoại di động).
+- Tích hợp sẵn bộ thu âm Podcast giọng đọc lịch sử trực tiếp trên trình duyệt mà không cần cài thêm phần mềm ngoài.
+- Tự động sinh mã QR tương tác cho 4 nhóm để học sinh quét bằng điện thoại, thả tim ❤️ và gửi bình luận đánh giá đồng đẳng theo thời gian thực (Realtime Cloud Sync).
+- Có Trung tâm kiểm duyệt sư phạm dành riêng cho Giáo viên kiểm tra, nhận xét và phê duyệt bài trước khi xuất bản lên Dòng thời gian.
+- Có chế độ trình chiếu toàn màn hình (Cinema Presentation Suite) phục vụ tiết báo cáo của học sinh.
+
+3. HỖ TRỢ VÀ THÔNG TIN BẢN QUYỀN HỘI THI:
+- Kèm theo các hình ảnh chụp thực tế giao diện trong thư mục: Minh_chung_hoc_lieu_so/
