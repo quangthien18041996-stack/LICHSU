@@ -3,24 +3,16 @@
 
 let syncState = {
     likes: {
-        "1": 35,
-        "2": 28,
-        "3": 25,
-        "4": 40
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0
     },
     reviews: {
-        "1": [
-            { reviewer: "Tổ 2 - Trải nghiệm", score: 10, comment: "Poster Tổ 1 thiết kế bố cục rất cổ kính, hào khí khởi nghĩa Lam Sơn - Tây Sơn rất rõ nét!", time: "08:15" }
-        ],
-        "2": [
-            { reviewer: "Tổ 4 - Đánh giá chéo", score: 10, comment: "Chiến thuật nghi binh rạch Gầm Xoài Mút mô tả cực kỳ sinh động và thuyết phục!", time: "08:20" }
-        ],
-        "3": [
-            { reviewer: "Tổ 1 - Bình chọn", score: 10, comment: "Lời bình lật đổ chúa Trịnh giải phóng Bắc Hà rất hào hùng!", time: "08:22" }
-        ],
-        "4": [
-            { reviewer: "Tổ 3 - Cảm nhận", score: 10, comment: "Trận Ngọc Hồi Đống Đa thần tốc đại phá 29 vạn quân Thanh quá tự hào!", time: "08:25" }
-        ]
+        "1": [],
+        "2": [],
+        "3": [],
+        "4": []
     },
     lastUpdated: Date.now()
 };
@@ -42,6 +34,32 @@ export default function handler(req, res) {
         try {
             const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
             const { type, groupId, data, currentLikes, fullState } = body;
+
+            // Xử lý Reset sạch toàn bộ dữ liệu trên Cloud
+            if (type === 'reset') {
+                syncState = {
+                    likes: { "1": 0, "2": 0, "3": 0, "4": 0 },
+                    reviews: { "1": [], "2": [], "3": [], "4": [] },
+                    isReset: true,
+                    lastUpdated: Date.now()
+                };
+                return res.status(200).json({ success: true, data: syncState });
+            }
+
+            // Xử lý Nạp bản mẫu Demo
+            if (type === 'load_sample') {
+                syncState = {
+                    likes: { "1": 18, "2": 22, "3": 19, "4": 35 },
+                    reviews: {
+                        "1": [{ reviewer: "Nhóm 2 (Trần Hoàng)", score: 10, comment: "Lược đồ căn cứ Tây Sơn phân tích rất chi tiết, giọng đọc truyền cảm và hào hùng!", time: "08:15" }],
+                        "2": [{ reviewer: "Nhóm 1 (Lê Quốc Dũng)", score: 10, comment: "Bản đồ phục kích Rạch Gầm vẽ rất sinh động, giọng đọc thuyết minh nghe rất hào hứng!", time: "08:18" }],
+                        "3": [{ reviewer: "Nhóm 4 (Lê Lan Anh)", score: 10, comment: "Bài phân tích chiến thuật tạm hòa hoãn với quân Trịnh rất sâu sắc, xứng đáng 10 điểm!", time: "08:20" }],
+                        "4": [{ reviewer: "Nhóm 3 (Nguyễn Mai Chi)", score: 10, comment: "Lời hiệu triệu Quang Trung quá hào hùng, poster đẹp xuất sắc!", time: "08:25" }]
+                    },
+                    lastUpdated: Date.now()
+                };
+                return res.status(200).json({ success: true, data: syncState });
+            }
 
             // Merge full state if provided (e.g. from local client sync)
             if (fullState) {

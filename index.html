@@ -993,6 +993,9 @@
                         </p>
                     </div>
                     <div class="flex items-center gap-2">
+                        <button type="button" onclick="loadAllSamplesForDemo()" class="cursor-pointer px-3.5 py-2 rounded-xl bg-stone-800 hover:bg-amber-950 text-amber-300 font-bold text-xs flex items-center gap-1.5 border border-amber-600/40 shadow transition">
+                            <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> Nạp Bản Mẫu 4 Nhóm
+                        </button>
                         <button onclick="approveAllGroups()" class="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs flex items-center gap-2 shadow-md transition">
                             <i class="fa-solid fa-check-double"></i> Phê Duyệt Cả 4 Nhóm
                         </button>
@@ -1009,37 +1012,37 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div class="card-tayson p-5 rounded-2xl border-l-4 border-l-amber-500 space-y-2">
                     <span class="text-xs text-stone-400">Điểm Trung Bình Nhóm 1</span>
-                    <div class="text-3xl font-black text-amber-300 font-mono" id="score-val-1">9.2 / 10</div>
+                    <div class="text-3xl font-black text-amber-300 font-mono" id="score-val-1">-- / 10</div>
                     <div class="text-[11px] text-stone-400 flex items-center justify-between pt-2 border-t border-stone-800">
-                        <span>Lượt đánh giá: <strong class="text-stone-200" id="reviews-count-1">3</strong></span>
-                        <span class="text-rose-400"><i class="fa-solid fa-heart mr-1"></i> <span id="likes-count-1">12</span></span>
+                        <span>Lượt đánh giá: <strong class="text-stone-200" id="reviews-count-1">0</strong></span>
+                        <span class="text-rose-400"><i class="fa-solid fa-heart mr-1"></i> <span id="likes-count-1">0</span></span>
                     </div>
                 </div>
 
                 <div class="card-tayson p-5 rounded-2xl border-l-4 border-l-red-600 space-y-2">
                     <span class="text-xs text-stone-400">Điểm Trung Bình Nhóm 2</span>
-                    <div class="text-3xl font-black text-amber-300 font-mono" id="score-val-2">9.6 / 10</div>
+                    <div class="text-3xl font-black text-amber-300 font-mono" id="score-val-2">-- / 10</div>
                     <div class="text-[11px] text-stone-400 flex items-center justify-between pt-2 border-t border-stone-800">
-                        <span>Lượt đánh giá: <strong class="text-stone-200" id="reviews-count-2">4</strong></span>
-                        <span class="text-rose-400"><i class="fa-solid fa-heart mr-1"></i> <span id="likes-count-2">18</span></span>
+                        <span>Lượt đánh giá: <strong class="text-stone-200" id="reviews-count-2">0</strong></span>
+                        <span class="text-rose-400"><i class="fa-solid fa-heart mr-1"></i> <span id="likes-count-2">0</span></span>
                     </div>
                 </div>
 
                 <div class="card-tayson p-5 rounded-2xl border-l-4 border-l-yellow-500 space-y-2">
                     <span class="text-xs text-stone-400">Điểm Trung Bình Nhóm 3</span>
-                    <div class="text-3xl font-black text-amber-300 font-mono" id="score-val-3">9.0 / 10</div>
+                    <div class="text-3xl font-black text-amber-300 font-mono" id="score-val-3">-- / 10</div>
                     <div class="text-[11px] text-stone-400 flex items-center justify-between pt-2 border-t border-stone-800">
-                        <span>Lượt đánh giá: <strong class="text-stone-200" id="reviews-count-3">3</strong></span>
-                        <span class="text-rose-400"><i class="fa-solid fa-heart mr-1"></i> <span id="likes-count-3">10</span></span>
+                        <span>Lượt đánh giá: <strong class="text-stone-200" id="reviews-count-3">0</strong></span>
+                        <span class="text-rose-400"><i class="fa-solid fa-heart mr-1"></i> <span id="likes-count-3">0</span></span>
                     </div>
                 </div>
 
                 <div class="card-tayson p-5 rounded-2xl border-l-4 border-l-red-800 space-y-2">
                     <span class="text-xs text-stone-400">Điểm Trung Bình Nhóm 4</span>
-                    <div class="text-3xl font-black text-amber-300 font-mono" id="score-val-4">9.8 / 10</div>
+                    <div class="text-3xl font-black text-amber-300 font-mono" id="score-val-4">-- / 10</div>
                     <div class="text-[11px] text-stone-400 flex items-center justify-between pt-2 border-t border-stone-800">
-                        <span>Lượt đánh giá: <strong class="text-stone-200" id="reviews-count-4">5</strong></span>
-                        <span class="text-rose-400"><i class="fa-solid fa-heart mr-1"></i> <span id="likes-count-4">24</span></span>
+                        <span>Lượt đánh giá: <strong class="text-stone-200" id="reviews-count-4">0</strong></span>
+                        <span class="text-rose-400"><i class="fa-solid fa-heart mr-1"></i> <span id="likes-count-4">0</span></span>
                     </div>
                 </div>
             </div>
@@ -1372,26 +1375,23 @@
                 id: 1,
                 name: "Nhóm 1",
                 topic: "Lật Đổ Chúa Nguyễn Ở Đàng Trong (1771 - 1777)",
-                headline: "Khởi Nghĩa Tây Sơn: Lật Đổ Ách Thống Trị Của Chúa Nguyễn Ở Đàng Trong",
-                slogan: "Lấy của người giàu chia cho người nghèo - Đứng lên vì nhân dân bần hàn!",
-                time: "1771 - 1777",
-                location: "Căn cứ Tây Sơn thượng đạo (An Khê, Gia Lai) → Kiên Mỹ (Bình Định) → Gia Định",
-                commander: "Ba anh em Nguyễn Nhạc, Nguyễn Huệ, Nguyễn Lữ",
-                tactics: "Chiến thuật liên minh và linh hoạt: Khai thác địa hình hiểm trở vùng thượng đạo để tích lũy lương thảo, xây dựng khối đại đoàn kết các dân tộc thiểu số và nhân dân nghèo khổ; linh hoạt tạm hòa hoãn với quân Trịnh ở phía Bắc để dồn toàn lực tiến quân thủy bộ 4 lần vào Gia Định lật đổ hoàn toàn cơ đồ chúa Nguyễn.",
-                summary: "Năm 1771, trước cảnh lầm than và sự lộng quyền của quyền thần Trương Phúc Loan, ba anh em Tây Sơn dựng cờ khởi nghĩa ở Tây Sơn thượng đạo. Với khẩu hiệu hợp lòng dân 'Lấy của người giàu chia cho người nghèo', nghĩa quân nhanh chóng lan rộng làm chủ từ Quảng Nam đến Bình Thuận. Năm 1774, Nguyễn Nhạc mưu trí tạm hòa hoãn với tướng Trịnh Hoàng Ngũ Phúc để dồn toàn lực tiến vào Nam. Từ 1776 đến 1777, nghĩa quân 4 lần tiến công Gia Định, bắt và giết chúa Nguyễn, chính quyền chúa Nguyễn thống trị hơn 200 năm ở Đàng Trong chính thức sụp đổ.",
-                quangTrungRole: "Nguyễn Huệ bộc lộ thiên tài quân sự kiệt xuất từ khi còn rất trẻ: trực tiếp chỉ huy đánh chiếm phủ thành Quy Nhơn mưu trí và chỉ huy mũi tiến công quyết định vào sào huyệt Gia Định năm 1777, đặt nền móng giải phóng trọn vẹn Đàng Trong.",
-                members: "Tổ 1 (Nguyễn Minh, Trần Thu Trang, Lê Quốc Dũng, Phạm Ngọc, Hoàng Hà)",
-                audioData: "images/poster_audio_group_1.mp3",
+                headline: "",
+                slogan: "",
+                time: "",
+                location: "",
+                commander: "",
+                tactics: "",
+                summary: "",
+                quangTrungRole: "",
+                members: "",
+                audioData: null,
                 posterAudio: "images/poster_audio_group_1.mp3",
                 posterImg: "images/hero_slide_3.jpg?v=epic",
-                status: "pending",
-                teacherFeedback: "Bài làm rất xuất sắc! Sử liệu chuẩn xác, lược đồ phân tích sâu sắc, bản thu âm truyền cảm hào hùng. Đã phê duyệt và xuất bản Poster Mã QR.",
-                likes: 18,
-                score: 9.8,
-                reviews: [
-                    { reviewer: "Nhóm 2 (Trần Hoàng)", score: 10, comment: "Lược đồ căn cứ Tây Sơn phân tích rất chi tiết, giọng đọc truyền cảm và hào hùng!", time: "08:15" },
-                    { reviewer: "Nhóm 4 (Lê Lan Anh)", score: 10, comment: "Bài phân tích chiến thuật tạm hòa hoãn với quân Trịnh rất sâu sắc, xứng đáng 10 điểm!", time: "08:20" }
-                ],
+                status: "draft",
+                teacherFeedback: "",
+                likes: 0,
+                score: 0,
+                reviews: [],
                 sgkTitle: "Khởi Nghĩa Tây Sơn Bùng Nổ & Lật Đổ Chúa Nguyễn",
                 sgkPeriod: "SGK Bài 8, Trang 35 - 37",
                 sgkContent: [
@@ -1414,25 +1414,23 @@
                 id: 2,
                 name: "Nhóm 2",
                 topic: "Đánh Tan Quân Xâm Lược Xiêm (Rạch Gầm - Xoài Mút 1785)",
-                headline: "Đại Phá 5 Vạn Quân Xiêm: Sấm Sét Trên Sông Rạch Gầm - Xoài Mút",
-                slogan: "Gió nổi sông Tiền, lửa thiêu thuyền giặc - Sợ Tây Sơn như sợ cọp!",
-                time: "1784 - 1785",
-                location: "Khúc sông Tiền (đoạn Rạch Gầm đến Xoài Mút, Tiền Giang)",
-                commander: "Long Nhương Tướng Quân Nguyễn Huệ",
-                tactics: "Lợi dụng dòng sông rộng, cù lao Thới Sơn che chắn và chế độ thủy triều lên xuống; dùng kế nhử địch vào bẫy mai phục, hỏa hổ pháo thuyền đồng loạt công kích từ hai đầu.",
-                summary: "Đầu năm 1785, trước họa xâm lăng của 5 vạn quân Xiêm do Nguyễn Ánh cầu viện, Nguyễn Huệ thần tốc kéo quân vào Gia Định. Ông đóng đại bản doanh tại Mỹ Tho và chọn đoạn sông Rạch Gầm - Xoài Mút làm trận địa quyết chiến. Đêm 19 rạng sáng 20/01/1785, bằng mưu kế nhử địch tài tình, thủy quân Tây Sơn đồng loạt xuất kích, bắn pháo và phóng hỏa thiêu rụi gần 300 thuyền giặc, tiêu diệt gần 5 vạn quân Xiêm trong chưa đầy nửa ngày, đập tan mưu đồ bành trướng của quân xâm lược.",
-                quangTrungRole: "Nguyễn Huệ trực tiếp thị sát địa hình, đưa ra quyết định quân sự táo bạo và chỉ huy chiến dịch thủy chiến mẫu mực, khiến quân Xiêm 'miệng tuy nói khoác mà lòng sợ Tây Sơn như cọp'.",
-                members: "Tổ 2 (Trần Quốc Bảo, Lê Hoàng Nam, Đặng Thùy Dung, Vũ Minh Tuấn)",
-                audioData: "images/poster_audio_group_2.mp3",
+                headline: "",
+                slogan: "",
+                time: "",
+                location: "",
+                commander: "",
+                tactics: "",
+                summary: "",
+                quangTrungRole: "",
+                members: "",
+                audioData: null,
                 posterAudio: "images/poster_audio_group_2.mp3",
                 posterImg: "images/hero_slide_2.jpg?v=epic",
-                status: "pending",
-                teacherFeedback: "Phân tích trận địa sông Tiền tuyệt vời! Chiến thuật nghi binh và hỏa công được làm nổi bật rõ nét. Đã phê duyệt và xuất bản Poster.",
-                likes: 22,
-                score: 9.9,
-                reviews: [
-                    { reviewer: "Nhóm 1 (Lê Quốc Dũng)", score: 10, comment: "Bản đồ phục kích Rạch Gầm vẽ rất sinh động, giọng đọc thuyết minh nghe rất hào hứng!", time: "08:18" }
-                ],
+                status: "draft",
+                teacherFeedback: "",
+                likes: 0,
+                score: 0,
+                reviews: [],
                 sgkTitle: "Đánh Tan Quân Xiêm Xâm Lược (Rạch Gầm - Xoài Mút)",
                 sgkPeriod: "SGK Bài 8, Trang 37",
                 sgkContent: [
@@ -1455,25 +1453,23 @@
                 id: 3,
                 name: "Nhóm 3",
                 topic: "Lật Đổ Chúa Trịnh, Triều Lê Sụp Đổ (1786 - 1788)",
-                headline: "Tiến Quân Ra Bắc Hà: Dẹp Tan Trịnh - Lê, Đặt Nền Móng Thống Nhất Non Sông",
-                slogan: "Phù Lê diệt Trịnh - Nối liền giang sơn cách trở hơn hai thế kỉ!",
-                time: "1786 - 1788",
-                location: "Phú Xuân → Đàng Ngoài → Kinh thành Thăng Long",
-                commander: "Nguyễn Huệ & Đại tướng quân Tây Sơn",
-                tactics: "Nghệ thuật thần tốc giương cao ngọn cờ chính nghĩa 'Phù Lê diệt Trịnh' để thu phục lòng dân Bắc Hà; thừa thắng đánh úp kinh thành Thăng Long khiến chúa Trịnh không kịp trở tay.",
-                summary: "Mùa hè năm 1786, sau khi hạ thành Phú Xuân giải phóng Đàng Trong, Nguyễn Huệ quyết định tiến thẳng ra Bắc. Với khẩu hiệu 'Phù Lê diệt Trịnh' hợp lòng dân, quân Tây Sơn đánh tan các đạo quân phòng thủ của họ Trịnh, tiến thẳng vào kinh thành Thăng Long tháng 7/1786, lật đổ nền thống trị hơn 200 năm của chúa Trịnh. Đến giữa năm 1788, Nguyễn Huệ ra Bắc lần hai, xóa bỏ hoàn toàn tập đoàn phong kiến nhà Lê phản bội, dọn đường cho nền thống nhất toàn vẹn của quốc gia.",
-                quangTrungRole: "Nguyễn Huệ có tầm nhìn chính trị - quân sự vượt thời đại: nhìn thấu thời cơ, xóa bỏ ranh giới sông Gianh chia cắt đất nước, khôn khéo trao lại quyền bính cho vua Lê để giữ yên lòng dân trước khi kiến lập trật tự mới.",
-                members: "Tổ 3 (Phạm Đình Trọng, Nguyễn Mai Chi, Đỗ Tuấn Kiệt, Bùi Thanh Hương)",
-                audioData: "images/poster_audio_group_3.mp3",
+                headline: "",
+                slogan: "",
+                time: "",
+                location: "",
+                commander: "",
+                tactics: "",
+                summary: "",
+                quangTrungRole: "",
+                members: "",
+                audioData: null,
                 posterAudio: "images/poster_audio_group_3.mp3",
                 posterImg: "images/hero_slide_4.jpg?v=epic",
-                status: "pending",
-                teacherFeedback: "Sản phẩm tư duy logic, làm rõ được ý nghĩa chấm dứt chia cắt Đàng Trong - Đàng Ngoài. Đã phê duyệt và xuất bản Poster.",
-                likes: 19,
-                score: 9.7,
-                reviews: [
-                    { reviewer: "Nhóm 4 (Hoàng Thúy An)", score: 10, comment: "Nêu bật được ý nghĩa thống nhất giang sơn, khẩu hiệu rất hào sảng!", time: "08:22" }
-                ],
+                status: "draft",
+                teacherFeedback: "",
+                likes: 0,
+                score: 0,
+                reviews: [],
                 sgkTitle: "Lật Đổ Chính Quyền Chúa Trịnh - Triều Lê Sụp Đổ",
                 sgkPeriod: "SGK Bài 8, Trang 38",
                 sgkContent: [
@@ -1494,25 +1490,23 @@
                 id: 4,
                 name: "Nhóm 4",
                 topic: "Đại Phá 29 Vạn Quân Thanh Xâm Lược (Ngọc Hồi - Đống Đa 1789)",
-                headline: "Mùa Xuân Kỷ Dậu 1789: Hoàng Đế Quang Trung Đại Phá 29 Vạn Quân Thanh",
-                slogan: "Đánh cho để dài tóc, đánh cho để đen răng - Đánh cho sử tri Nam quốc anh hùng chi hữu chủ!",
-                time: "Xuân Kỷ Dậu (1789)",
-                location: "Núi Bân (Huế) → Nghệ An → Tam Điệp → Hà Hồi, Ngọc Hồi, Đống Đa → Thăng Long",
-                commander: "Hoàng đế Quang Trung (Nguyễn Huệ), Đô đốc Đặng Tiến Đông, Đô đốc Bảo",
-                tactics: "Nghệ thuật hành quân thần tốc vô tiền khoáng hậu (3 người 1 cáng); tâm lý chiến bức hàng đồn Hà Hồi; cảm tử dùng khiên rơm ướt phá lũy đồn Ngọc Hồi; tập kích bất ngờ thiêu rụi đồn Khương Thượng - Đống Đa.",
-                summary: "Cuối năm 1788, Tôn Sĩ Nghị chỉ huy 29 vạn quân Thanh tràn sang xâm lược. Ngày 22/12/1788, Nguyễn Huệ lên ngôi Hoàng đế tại Núi Bân rồi lập tức xuất quân thần tốc ra Bắc. Dừng chân tại Nghệ An tuyển thêm 1 vạn quân tinh nhuệ, tổ chức hành quân luân phiên ngày đêm. Từ đêm 30 Tết Kỷ Dậu, đại quân Tây Sơn liên tiếp hạ đồn Gián Khẩu, bao vây bức hàng đồn Hà Hồi (mùng 3 Tết), công phá pháo đài Ngọc Hồi và đồn Đống Đa (mùng 5 Tết). Tướng giặc Sầm Nghi Đống thắt cổ tự vẫn, Tôn Sĩ Nghị hoảng loạn vượt cầu phao chạy tháo thân. Trưa mùng 5 Tết, Vua Quang Trung ngự trên bành voi, áo bào sém đen khói súng tiến vào Thăng Long ca khúc khải hoàn mừng Tết sớm 2 ngày.",
-                quangTrungRole: "Quang Trung là linh hồn của toàn bộ chiến dịch: quyết định xưng đế chính danh, vạch kế hoạch tác chiến thần tốc táo bạo, trực tiếp cưỡi voi xông pha nơi hòn tên mũi đạn, truyền cảm hứng bách chiến bách thắng cho ba quân tướng sĩ.",
-                members: "Tổ 4 (Ngô Quang Huy, Trần Phương Thảo, Đinh Gia Bách, Hoàng Thúy An)",
-                audioData: "images/poster_audio_group_4.mp3",
+                headline: "",
+                slogan: "",
+                time: "",
+                location: "",
+                commander: "",
+                tactics: "",
+                summary: "",
+                quangTrungRole: "",
+                members: "",
+                audioData: null,
                 posterAudio: "images/poster_audio_group_4.mp3",
                 posterImg: "images/hero_slide_1.jpg?v=epic",
-                status: "pending",
-                teacherFeedback: "Tác phẩm xuất sắc toàn diện! Tái hiện trọn vẹn hào khí mùa xuân Kỷ Dậu 1789. Đã phê duyệt và xuất bản Poster.",
-                likes: 35,
-                score: 10.0,
-                reviews: [
-                    { reviewer: "Nhóm 3 (Nguyễn Mai Chi)", score: 10, comment: "Lời hiệu triệu Quang Trung quá hào hùng, poster đẹp xuất sắc!", time: "08:25" }
-                ],
+                status: "draft",
+                teacherFeedback: "",
+                likes: 0,
+                score: 0,
+                reviews: [],
                 sgkTitle: "Đại Phá Quân Thanh Xâm Lược (1789)",
                 sgkPeriod: "SGK Bài 8, Trang 38 - 39",
                 sgkContent: [
@@ -1931,7 +1925,7 @@ function switchTab(tabId) {
         // Xóa trắng để học sinh tự làm
         function clearCurrentGroupData() {
             const g = GROUPS_DATA[currentActiveGroup];
-            if (confirm(`Bạn có chắc muốn xóa trắng biểu mẫu của ${g.name} để học sinh thực hành từ đầu không?`)) {
+            if (confirm(`Bạn có chắc muốn xóa trắng toàn bộ dữ liệu, điểm số và bài làm của ${g.name} để học sinh thực hành từ đầu không?`)) {
                 g.headline = "";
                 g.slogan = "";
                 g.time = "";
@@ -1942,9 +1936,21 @@ function switchTab(tabId) {
                 g.quangTrungRole = "";
                 g.members = "";
                 g.audioData = null;
+                g.status = "draft";
+                g.teacherFeedback = "";
+                g.score = 0;
+                g.likes = 0;
+                g.reviews = [];
+                
                 renderAudioPlayer(null);
                 renderActiveGroupForm(currentActiveGroup);
                 saveGroupData(false);
+                saveToLocalStorage();
+                updateTeacherDashboard();
+                renderGalleryTimeline();
+                generateAllQRCodes();
+                
+                alert(`✅ Đã xóa trắng toàn bộ dữ liệu và điểm số của ${g.name}! Biểu mẫu hiện đã sạch để học sinh làm bài.`);
             }
         }
 
@@ -1962,9 +1968,67 @@ function switchTab(tabId) {
                 g.summary = sample.summary;
                 g.quangTrungRole = sample.quangTrungRole;
                 g.members = sample.members;
+                g.audioData = `images/poster_audio_group_${currentActiveGroup}.mp3`;
+                g.status = "approved";
+                g.teacherFeedback = "Bài làm rất xuất sắc! Sử liệu chuẩn xác, phân tích sâu sắc. Đã phê duyệt và xuất bản Poster.";
+                g.score = (9.5 + Math.random() * 0.4).toFixed(1);
+                g.likes = Math.floor(15 + Math.random() * 10);
+                g.reviews = [
+                    { reviewer: "Nhóm bạn đánh giá", score: 10, comment: "Nội dung phân tích rất sắc bén, giọng đọc thuyết minh hào hùng!", time: "08:15" }
+                ];
                 renderActiveGroupForm(currentActiveGroup);
+                renderAudioPlayer(g.audioData);
                 saveGroupData(false);
-                alert(`Đã nạp nội dung gợi ý mẫu cho ${g.name}!`);
+                saveToLocalStorage();
+                updateTeacherDashboard();
+                renderGalleryTimeline();
+                generateAllQRCodes();
+                alert(`🎉 Đã nạp đầy đủ nội dung gợi ý mẫu, bản thu âm và điểm số cho ${g.name}!`);
+            }
+        }
+
+        function loadAllSamplesForDemo() {
+            if (confirm("Bạn có muốn nạp dữ liệu mẫu cho CẢ 4 NHÓM để thực hiện bài thuyết trình / demo không?")) {
+                for (let i = 1; i <= 4; i++) {
+                    const sample = SAMPLE_DATA[i];
+                    const g = GROUPS_DATA[i];
+                    if (sample && g) {
+                        g.headline = sample.headline;
+                        g.slogan = sample.slogan;
+                        g.time = sample.time;
+                        g.location = sample.location;
+                        g.commander = sample.commander;
+                        g.tactics = sample.tactics;
+                        g.summary = sample.summary;
+                        g.quangTrungRole = sample.quangTrungRole;
+                        g.members = sample.members;
+                        g.audioData = `images/poster_audio_group_${i}.mp3`;
+                        g.status = "approved";
+                        g.teacherFeedback = "Tác phẩm xuất sắc! Đã kiểm duyệt đạt chuẩn.";
+                        g.score = (9.6 + (i * 0.1)).toFixed(1);
+                        g.likes = 15 + i * 5;
+                        g.reviews = [
+                            { reviewer: `Nhóm ${i === 1 ? 2 : 1} đánh giá`, score: 10, comment: "Poster rất đẹp, nội dung lịch sử hào hùng!", time: "08:20" }
+                        ];
+                    }
+                }
+                saveToLocalStorage();
+                renderActiveGroupForm(currentActiveGroup);
+                updateTeacherDashboard();
+                renderGalleryTimeline();
+                generateAllQRCodes();
+                
+                // Đồng bộ lên cloud nếu có mạng
+                try {
+                    const endpoint = getCloudSyncEndpoint();
+                    fetch(endpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ type: 'load_sample' })
+                    }).catch(() => {});
+                } catch(e) {}
+
+                alert("🎉 Đã nạp dữ liệu mẫu cho toàn bộ 4 nhóm thành công!");
             }
         }
 
@@ -3003,11 +3067,24 @@ function switchTab(tabId) {
         function applyCloudData(cloudData) {
             let changed = false;
 
-            // 1. Đồng bộ lượt thả tim (Likes) - chỉ tăng, không bao giờ bị giảm
+            // Xử lý nếu có lệnh Reset từ Cloud
+            if (cloudData.isReset) {
+                for (let i = 1; i <= 4; i++) {
+                    GROUPS_DATA[i].likes = 0;
+                    GROUPS_DATA[i].reviews = [];
+                    GROUPS_DATA[i].score = 0;
+                }
+                saveToLocalStorage();
+                updateTeacherDashboard();
+                renderGalleryTimeline();
+                return;
+            }
+
+            // 1. Đồng bộ lượt thả tim (Likes)
             if (cloudData.likes) {
                 for (let i = 1; i <= 4; i++) {
                     const cloudLikes = cloudData.likes[String(i)] ?? cloudData.likes[i];
-                    if (cloudLikes !== undefined && Number(cloudLikes) > (GROUPS_DATA[i].likes || 0)) {
+                    if (cloudLikes !== undefined && Number(cloudLikes) !== (GROUPS_DATA[i].likes || 0)) {
                         GROUPS_DATA[i].likes = Number(cloudLikes);
                         changed = true;
                     }
@@ -3535,7 +3612,14 @@ Poster Triển Lãm Lịch Sử và Mã QR của nhóm đã được tạo hoàn
                     const scoreEl = document.getElementById(`score-val-${i}`);
                     const countEl = document.getElementById(`reviews-count-${i}`);
                     const likesEl = document.getElementById(`likes-count-${i}`);
-                    if (scoreEl) scoreEl.textContent = `${g.score || '9.0'} / 10`;
+                    if (scoreEl) {
+                        const numScore = Number(g.score);
+                        if (g.reviews && g.reviews.length > 0 && numScore > 0) {
+                            scoreEl.textContent = `${numScore.toFixed(1)} / 10`;
+                        } else {
+                            scoreEl.textContent = `-- / 10`;
+                        }
+                    }
                     if (countEl) countEl.textContent = g.reviews ? g.reviews.length : 0;
                     if (likesEl) likesEl.textContent = g.likes || 0;
                 }
@@ -3726,10 +3810,48 @@ Poster Triển Lãm Lịch Sử và Mã QR của nhóm đã được tạo hoàn
         }
 
         function resetClassData() {
-            if (confirm("Bạn có chắc muốn đặt lại toàn bộ dữ liệu ban đầu (xóa sạch bài làm của các nhóm) để bắt đầu tiết học mới không?")) {
-                localStorage.removeItem('TAYSON_DATA_V1');
-                localStorage.removeItem('TAYSON_STUDENT_DATA_V3');
-                location.reload();
+            if (confirm("Bạn có chắc muốn đặt lại toàn bộ dữ liệu ban đầu (xóa sạch bài làm, điểm số, lượt thả tim của TẤT CẢ 4 nhóm) để bắt đầu tiết học mới không?")) {
+                for (let i = 1; i <= 4; i++) {
+                    const g = GROUPS_DATA[i];
+                    if (g) {
+                        g.headline = "";
+                        g.slogan = "";
+                        g.time = "";
+                        g.location = "";
+                        g.commander = "";
+                        g.tactics = "";
+                        g.summary = "";
+                        g.quangTrungRole = "";
+                        g.members = "";
+                        g.audioData = null;
+                        g.status = "draft";
+                        g.teacherFeedback = "";
+                        g.score = 0;
+                        g.likes = 0;
+                        g.reviews = [];
+                    }
+                }
+                
+                // Lưu trạng thái trắng sạch vào localStorage để khi F5 / mở lại trang vẫn trắng 100%
+                saveToLocalStorage();
+                
+                // Đồng thời reset trên Cloud Sync (nếu có kết nối)
+                try {
+                    const endpoint = getCloudSyncEndpoint();
+                    fetch(endpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ type: 'reset' })
+                    }).catch(() => {});
+                } catch(e) {}
+                
+                renderActiveGroupForm(currentActiveGroup);
+                renderAudioPlayer(null);
+                updateTeacherDashboard();
+                renderGalleryTimeline();
+                generateAllQRCodes();
+                
+                alert("✅ Đã đặt lại toàn bộ dữ liệu thành công! Cả 4 nhóm hiện đã ở trạng thái trắng sạch (điểm số và bài làm đã về 0), sẵn sàng cho học sinh bắt đầu tiết học mới.");
             }
         }
     
