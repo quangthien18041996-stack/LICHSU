@@ -772,11 +772,6 @@
                             </div>
                         </div>
 
-                        <!-- Moderation Status Alert Box -->
-                        <div id="group-moderation-alert" class="p-3.5 rounded-xl text-xs flex items-center justify-between border transition">
-                            <!-- Injected dynamically by JS -->
-                        </div>
-
                         <!-- Form fields -->
                         <form id="group-form" onsubmit="event.preventDefault(); saveGroupData();" class="space-y-5 text-xs">
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -2069,79 +2064,24 @@ function switchTab(tabId) {
         }
 
         function renderModerationStatusAlert(data) {
-            const box = document.getElementById('group-moderation-alert');
             const submitBtnText = document.getElementById('submit-btn-text');
             const submitBtn = document.getElementById('btn-submit-moderation');
-            if (!box) return;
+            if (!submitBtnText || !submitBtn) return;
 
             const st = data.status || 'draft';
 
             if (st === 'approved') {
-                box.className = "p-3.5 rounded-2xl text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-emerald-500/50 bg-emerald-950/40 text-emerald-200";
-                box.innerHTML = `
-                    <div class="flex items-center gap-2.5">
-                        <span class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm border border-emerald-500/40">
-                            <i class="fa-solid fa-stamp"></i>
-                        </span>
-                        <div>
-                            <span class="font-bold text-emerald-300 uppercase tracking-wide">Trạng thái: ĐÃ ĐƯỢC GIÁO VIÊN PHÊ DUYỆT!</span>
-                            <p class="text-[11px] text-stone-300 mt-0.5">${data.teacherFeedback ? `Lời nhận xét của GV: "${data.teacherFeedback}"` : 'Sản phẩm đã đạt chuẩn sử liệu và sẵn sàng triển lãm.'}</p>
-                        </div>
-                    </div>
-                    <button type="button" onclick="switchTab('gallery')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-stone-950 font-black text-xs transition whitespace-nowrap">
-                        <i class="fa-solid fa-qrcode mr-1"></i> Xem Mã QR
-                    </button>
-                `;
-                if (submitBtnText) submitBtnText.textContent = "CẬP NHẬT & NỘP LẠI CHO GV";
-                if (submitBtn) submitBtn.className = "px-6 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold flex items-center gap-2 shadow-lg transition";
+                submitBtnText.textContent = "CẬP NHẬT & NỘP LẠI CHO GV";
+                submitBtn.className = "px-6 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold flex items-center gap-2 shadow-lg transition";
             } else if (st === 'pending') {
-                box.className = "p-3.5 rounded-2xl text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-amber-500/50 bg-amber-950/40 text-amber-200";
-                box.innerHTML = `
-                    <div class="flex items-center gap-2.5">
-                        <span class="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-sm border border-amber-500/40 animate-pulse">
-                            <i class="fa-solid fa-clock"></i>
-                        </span>
-                        <div>
-                            <span class="font-bold text-amber-300 uppercase tracking-wide">Trạng thái: ĐÃ NỘP BÀI - ĐANG CHỜ GIÁO VIÊN KIỂM DUYỆT</span>
-                            <p class="text-[11px] text-stone-300 mt-0.5">Giáo viên đang soát duyệt nội dung và bản thu âm của nhóm.</p>
-                        </div>
-                    </div>
-                    <button type="button" onclick="switchTab('teacher')" class="px-3 py-1.5 rounded-lg bg-stone-800 hover:bg-stone-700 text-amber-300 font-bold text-xs transition border border-amber-600/40 whitespace-nowrap">
-                        <i class="fa-solid fa-user-shield mr-1"></i> Mở Bảng Duyệt GV
-                    </button>
-                `;
-                if (submitBtnText) submitBtnText.textContent = "CẬP NHẬT LẠI BẢN NỘP";
-                if (submitBtn) submitBtn.className = "px-6 py-2.5 rounded-xl bg-amber-700 hover:bg-amber-600 text-stone-950 font-bold flex items-center gap-2 shadow-lg transition";
+                submitBtnText.textContent = "CẬP NHẬT LẠI BẢN NỘP";
+                submitBtn.className = "px-6 py-2.5 rounded-xl bg-amber-700 hover:bg-amber-600 text-stone-950 font-bold flex items-center gap-2 shadow-lg transition";
             } else if (st === 'revision') {
-                box.className = "p-3.5 rounded-2xl text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-rose-500/50 bg-rose-950/40 text-rose-200";
-                box.innerHTML = `
-                    <div class="flex items-center gap-2.5">
-                        <span class="w-7 h-7 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold text-sm border border-rose-500/40">
-                            <i class="fa-solid fa-triangle-exclamation"></i>
-                        </span>
-                        <div>
-                            <span class="font-bold text-rose-300 uppercase tracking-wide">GIÁO VIÊN YÊU CẦU CHỈNH SỬA:</span>
-                            <p class="text-[11px] text-rose-200 mt-0.5 font-medium">"${data.teacherFeedback || 'Vui lòng bổ sung thêm thông tin diễn biến hoặc kiểm tra lại mốc lịch sử.'}"</p>
-                        </div>
-                    </div>
-                `;
-                if (submitBtnText) submitBtnText.textContent = "NỘP LẠI BẢN CHỈNH SỬA";
-                if (submitBtn) submitBtn.className = "px-6 py-2.5 rounded-xl bg-gradient-to-r from-red-700 to-amber-600 text-white font-bold flex items-center gap-2 shadow-lg transition";
+                submitBtnText.textContent = "NỘP LẠI BẢN CHỈNH SỬA";
+                submitBtn.className = "px-6 py-2.5 rounded-xl bg-gradient-to-r from-red-700 to-amber-600 text-white font-bold flex items-center gap-2 shadow-lg transition";
             } else {
-                box.className = "p-3.5 rounded-2xl text-xs flex items-center justify-between border border-stone-800 bg-stone-950/60 text-stone-300";
-                box.innerHTML = `
-                    <div class="flex items-center gap-2.5">
-                        <span class="w-7 h-7 rounded-lg bg-stone-800 text-stone-400 flex items-center justify-center font-bold text-sm">
-                            <i class="fa-solid fa-pen-nib"></i>
-                        </span>
-                        <div>
-                            <span class="font-semibold text-stone-200">Trạng thái: <strong>Đang Soạn Thảo (Nháp)</strong></span>
-                            <p class="text-[11px] text-stone-400 mt-0.5">Sau khi hoàn thành, nhấn nút "Nộp bài lên Giáo viên kiểm duyệt" ở cuối form.</p>
-                        </div>
-                    </div>
-                `;
-                if (submitBtnText) submitBtnText.textContent = "NỘP BÀI LÊN GIÁO VIÊN KIỂM DUYỆT";
-                if (submitBtn) submitBtn.className = "px-6 py-2.5 rounded-xl bg-gradient-to-r from-red-700 via-amber-600 to-amber-500 text-stone-950 font-black flex items-center gap-2 shadow-lg transition";
+                submitBtnText.textContent = "NỘP BÀI LÊN GIÁO VIÊN KIỂM DUYỆT";
+                submitBtn.className = "px-6 py-2.5 rounded-xl bg-gradient-to-r from-red-700 via-amber-600 to-amber-500 text-stone-950 font-black flex items-center gap-2 shadow-lg transition";
             }
         }
 
