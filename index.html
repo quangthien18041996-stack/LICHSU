@@ -1907,7 +1907,7 @@ function switchTab(tabId) {
 
             // Save to LocalStorage
             try {
-                localStorage.setItem('TAYSON_STUDENT_DATA_V3', JSON.stringify(GROUPS_DATA));
+                localStorage.setItem('TAYSON_STUDENT_DATA_V4', JSON.stringify(GROUPS_DATA));
                 showSaveIndicator(true);
                 if (showNotification) {
                     alert(`Đã lưu dữ liệu bài làm của ${g.name} thành công!`);
@@ -2052,7 +2052,7 @@ function switchTab(tabId) {
 
             g.status = 'pending';
             try {
-                localStorage.setItem('TAYSON_STUDENT_DATA_V3', JSON.stringify(GROUPS_DATA));
+                localStorage.setItem('TAYSON_STUDENT_DATA_V4', JSON.stringify(GROUPS_DATA));
             } catch(e) {}
 
             renderActiveGroupForm(currentActiveGroup);
@@ -2091,9 +2091,12 @@ function switchTab(tabId) {
 
         function loadFromLocalStorage() {
             try {
-                // Xóa cache cũ nếu có để đảm bảo form trống cho học sinh thực hành
+                // Xóa sạch các cache cũ V1, V2, V3 để triệt tiêu số tim rác cũ (như 2849 tim)
                 localStorage.removeItem('TAYSON_DATA_V1');
-                const raw = localStorage.getItem('TAYSON_STUDENT_DATA_V3');
+                localStorage.removeItem('TAYSON_DATA_V2');
+                localStorage.removeItem('TAYSON_STUDENT_DATA_V3');
+
+                const raw = localStorage.getItem('TAYSON_STUDENT_DATA_V4');
                 if (raw) {
                     const parsed = JSON.parse(raw);
                     for (let i = 1; i <= 4; i++) {
@@ -2102,6 +2105,10 @@ function switchTab(tabId) {
                             editableFields.forEach(f => {
                                 if (parsed[i][f] !== undefined) GROUPS_DATA[i][f] = parsed[i][f];
                             });
+                            // Triệt tiêu số tim ảo do test cũ
+                            if (Number(GROUPS_DATA[i].likes) > 500) {
+                                GROUPS_DATA[i].likes = 0;
+                            }
                         }
                     }
                 }
@@ -2113,7 +2120,7 @@ function switchTab(tabId) {
         function saveToLocalStorage() {
             try {
                 if (typeof localStorage !== 'undefined') {
-                    localStorage.setItem('TAYSON_STUDENT_DATA_V3', JSON.stringify(GROUPS_DATA));
+                    localStorage.setItem('TAYSON_STUDENT_DATA_V4', JSON.stringify(GROUPS_DATA));
                 }
             } catch (e) {
                 console.warn("Could not save to localStorage:", e);
@@ -3007,7 +3014,7 @@ function switchTab(tabId) {
         function applyCloudData(cloudData) {
             let changed = false;
 
-            // Xử lý nếu có lệnh Reset từ Cloud
+            // Xử lý nếu có lệnh Reset từ Cloud hoặc Cloud trắng sạch
             if (cloudData.isReset) {
                 for (let i = 1; i <= 4; i++) {
                     GROUPS_DATA[i].likes = 0;
@@ -3017,16 +3024,21 @@ function switchTab(tabId) {
                 saveToLocalStorage();
                 updateTeacherDashboard();
                 renderGalleryTimeline();
+                refreshAllInteractionViews();
                 return;
             }
 
-            // 1. Đồng bộ lượt thả tim (Likes)
+            // 1. Đồng bộ lượt thả tim (Likes) - bảo vệ chống số tim ảo
             if (cloudData.likes) {
                 for (let i = 1; i <= 4; i++) {
                     const cloudLikes = cloudData.likes[String(i)] ?? cloudData.likes[i];
-                    if (cloudLikes !== undefined && Number(cloudLikes) !== (GROUPS_DATA[i].likes || 0)) {
-                        GROUPS_DATA[i].likes = Number(cloudLikes);
-                        changed = true;
+                    if (cloudLikes !== undefined) {
+                        const numLikes = Number(cloudLikes);
+                        // Chỉ nhận số hợp lệ thực tế (< 1000)
+                        if (numLikes < 1000 && numLikes !== (GROUPS_DATA[i].likes || 0)) {
+                            GROUPS_DATA[i].likes = numLikes;
+                            changed = true;
+                        }
                     }
                 }
             }
@@ -3035,18 +3047,18 @@ function switchTab(tabId) {
             if (cloudData.reviews) {
                 for (let i = 1; i <= 4; i++) {
                     const cloudReviews = cloudData.reviews[String(i)] ?? cloudData.reviews[i] ?? [];
-                    if (Array.isArray(cloudReviews) && cloudReviews.length > 0) {
-                        if (!GROUPS_DATA[i].reviews) GROUPS_DATA[i].reviews = [];
-                        const existingComments = new Set(GROUPS_DATA[i].reviews.map(r => (r.comment || '').trim()));
-                        let newAdded = false;
-                        cloudReviews.forEach(cr => {
-                            if (cr.comment && !existingComments.has(cr.comment.trim())) {
-                                GROUPS_DATA[i].reviews.unshift(cr);
-                                existingComments.add(cr.comment.trim());
-                                newAdded = true;
-                            }
-                        });
-                        if (newAdded) changed = true;
+                    if (Array.isArray(cloudReviews)) {
+                        // Nếu trên cloud đã xóa sạch bình luận thì máy con cũng xóa sạch
+                        if (cloudReviews.length === 0 && GROUPS_DATA[i].reviews && GROUPS_DATA[i].reviews.length > 0) {
+                            GROUPS_DATA[i].reviews = [];
+                            GROUPS_DATA[i].score = 0;
+                            changed = true;
+                        } else if (cloudReviews.length > 0) {
+                            GROUPS_DATA[i].reviews = cloudReviews;
+                            const sum = cloudReviews.reduce((acc, curr) => acc + (Number(curr.score) || 10), 0);
+                            GROUPS_DATA[i].score = (sum / cloudReviews.length).toFixed(1);
+                            changed = true;
+                        }
                     }
                 }
             }
@@ -3054,6 +3066,7 @@ function switchTab(tabId) {
             if (changed) {
                 saveToLocalStorage();
                 refreshAllInteractionViews();
+                updateTeacherDashboard();
             }
         }
 
@@ -3108,21 +3121,7 @@ function switchTab(tabId) {
                     body: JSON.stringify({
                         type,
                         groupId,
-                        data,
-                        fullState: {
-                            likes: {
-                                1: GROUPS_DATA[1]?.likes || 0,
-                                2: GROUPS_DATA[2]?.likes || 0,
-                                3: GROUPS_DATA[3]?.likes || 0,
-                                4: GROUPS_DATA[4]?.likes || 0
-                            },
-                            reviews: {
-                                1: GROUPS_DATA[1]?.reviews || [],
-                                2: GROUPS_DATA[2]?.reviews || [],
-                                3: GROUPS_DATA[3]?.reviews || [],
-                                4: GROUPS_DATA[4]?.reviews || []
-                            }
-                        }
+                        data
                     })
                 });
 
@@ -3353,7 +3352,7 @@ function switchTab(tabId) {
 
             g.status = 'approved';
             try {
-                localStorage.setItem('TAYSON_STUDENT_DATA_V3', JSON.stringify(GROUPS_DATA));
+                localStorage.setItem('TAYSON_STUDENT_DATA_V4', JSON.stringify(GROUPS_DATA));
             } catch(e) {}
 
             renderActiveGroupForm(currentActiveGroup);
@@ -3669,7 +3668,7 @@ Poster Triển Lãm Lịch Sử và Mã QR của nhóm đã được tạo hoàn
 
             g.status = 'approved';
             try {
-                localStorage.setItem('TAYSON_STUDENT_DATA_V3', JSON.stringify(GROUPS_DATA));
+                localStorage.setItem('TAYSON_STUDENT_DATA_V4', JSON.stringify(GROUPS_DATA));
             } catch(e) {}
 
             updateTeacherDashboard();
@@ -3687,7 +3686,7 @@ Poster Triển Lãm Lịch Sử và Mã QR của nhóm đã được tạo hoàn
             g.teacherFeedback = note || 'Giáo viên yêu cầu kiểm tra lại độ chính xác của sử liệu và hoàn thiện diễn biến.';
             g.status = 'revision';
             try {
-                localStorage.setItem('TAYSON_STUDENT_DATA_V3', JSON.stringify(GROUPS_DATA));
+                localStorage.setItem('TAYSON_STUDENT_DATA_V4', JSON.stringify(GROUPS_DATA));
             } catch(e) {}
 
             updateTeacherDashboard();
@@ -3704,7 +3703,7 @@ Poster Triển Lãm Lịch Sử và Mã QR của nhóm đã được tạo hoàn
                     if (!g.teacherFeedback) g.teacherFeedback = "Đạt yêu cầu chuẩn mực.";
                 }
                 try {
-                    localStorage.setItem('TAYSON_STUDENT_DATA_V3', JSON.stringify(GROUPS_DATA));
+                    localStorage.setItem('TAYSON_STUDENT_DATA_V4', JSON.stringify(GROUPS_DATA));
                 } catch(e) {}
                 updateTeacherDashboard();
                 renderGalleryTimeline();

@@ -33,7 +33,7 @@ export default function handler(req, res) {
     if (req.method === 'POST') {
         try {
             const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
-            const { type, groupId, data, currentLikes, fullState } = body;
+            const { type, groupId, data } = body;
 
             // Xử lý Reset sạch toàn bộ dữ liệu trên Cloud
             if (type === 'reset') {
@@ -46,7 +46,7 @@ export default function handler(req, res) {
                 return res.status(200).json({ success: true, data: syncState });
             }
 
-            // Xử lý Nạp bản mẫu Demo
+            // Xử lý Nạp bản mẫu Demo cho cả 4 nhóm
             if (type === 'load_sample') {
                 syncState = {
                     likes: { "1": 18, "2": 22, "3": 19, "4": 35 },
@@ -61,38 +61,14 @@ export default function handler(req, res) {
                 return res.status(200).json({ success: true, data: syncState });
             }
 
-            // Merge full state if provided (e.g. from local client sync)
-            if (fullState) {
-                if (fullState.likes) {
-                    for (let i = 1; i <= 4; i++) {
-                        const sLikes = Number(fullState.likes[String(i)] || fullState.likes[i] || 0);
-                        if (sLikes > Number(syncState.likes[String(i)] || 0)) {
-                            syncState.likes[String(i)] = sLikes;
-                        }
-                    }
-                }
-                if (fullState.reviews) {
-                    for (let i = 1; i <= 4; i++) {
-                        const sRevs = fullState.reviews[String(i)] || fullState.reviews[i] || [];
-                        if (Array.isArray(sRevs) && sRevs.length > 0) {
-                            if (!syncState.reviews[String(i)]) syncState.reviews[String(i)] = [];
-                            const existing = new Set(syncState.reviews[String(i)].map(r => (r.comment || '').trim()));
-                            sRevs.forEach(r => {
-                                if (r.comment && !existing.has(r.comment.trim())) {
-                                    syncState.reviews[String(i)].unshift(r);
-                                    existing.add(r.comment.trim());
-                                }
-                            });
-                        }
-                    }
-                }
-            }
-
+            // Tăng tim khi có người thả tim thật
             if (type === 'like' && groupId) {
                 const g = String(groupId);
-                const cur = Number(syncState.likes[g] || 0);
-                syncState.likes[g] = cur + 1;
-            } else if (type === 'comment' && groupId && data) {
+                if (syncState.likes[g] === undefined) syncState.likes[g] = 0;
+                syncState.likes[g] = Number(syncState.likes[g]) + 1;
+            } 
+            // Thêm bình luận khi có người gửi nhận xét thật
+            else if (type === 'comment' && groupId && data) {
                 const g = String(groupId);
                 if (!syncState.reviews[g]) syncState.reviews[g] = [];
                 const exists = syncState.reviews[g].some(r => (r.comment || '').trim() === (data.comment || '').trim());
