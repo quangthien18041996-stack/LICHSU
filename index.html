@@ -197,6 +197,11 @@
             <span class="font-medium text-amber-100/90 hidden sm:inline">Lịch sử 8 - Bài 8: Phong trào Tây Sơn</span>
         </div>
         <div class="flex items-center gap-2">
+            <!-- Nút Slide Trình Chiếu -->
+            <a href="slide.html" target="_blank" class="cursor-pointer px-2.5 py-1 rounded-lg bg-amber-600/30 hover:bg-amber-600/50 border border-amber-500/60 text-amber-200 font-bold text-[11px] flex items-center gap-1.5 transition shadow" title="Mở Slide trình chiếu bài dạy & hướng dẫn học sinh">
+                <i class="fa-solid fa-display text-amber-400"></i>
+                <span class="hidden sm:inline">Slide Bài Giảng</span>
+            </a>
             <!-- Ca khúc chủ đề: HÀO KHÍ VIỆT NAM -->
             <audio id="audio-hao-khi" src="images/hao_khi_viet_nam.mp3?v=clean_outro" preload="auto"></audio>
             <button type="button" onclick="toggleHaoKhiMusic()" id="btn-hao-khi" class="cursor-pointer px-3 py-1 rounded-lg bg-gradient-to-r from-red-950 via-stone-900 to-amber-950 hover:from-red-900 hover:to-amber-900 border border-amber-500/60 text-amber-200 font-bold text-[11px] flex items-center gap-2 transition shadow-lg shadow-red-950/40" title="Bật / Dừng ca khúc hào hùng: Hào Khí Việt Nam">
@@ -254,8 +259,11 @@
                     <i class="fa-solid fa-qrcode text-sm"></i> QR Vào Lớp
                 </button>
                 
+                <a href="slide.html" target="_blank" class="cursor-pointer px-3.5 py-2 rounded-xl bg-gradient-to-r from-red-950 to-amber-950 hover:from-red-900 hover:to-amber-900 text-amber-200 font-bold text-xs flex items-center gap-2 border border-amber-500/60 transition shadow-md" title="Mở Slide Trình Chiếu Giới Thiệu & Hướng Dẫn Thao Tác">
+                    <i class="fa-solid fa-display text-amber-400"></i> Slide Bài Giảng
+                </a>
             
-            <button type="button" onclick="openPresentationSuite(1)"
+                <button type="button" onclick="openPresentationSuite(1)"
 
  class="cursor-pointer px-3.5 py-2 rounded-xl bg-stone-900/90 hover:bg-stone-800 text-amber-300 font-bold text-xs flex items-center gap-2 border border-amber-500/50 transition hover:shadow-lg hover:shadow-amber-900/30" title="Chế độ Trình chiếu Báo cáo màn hình lớn / Máy chiếu">
                     <i class="fa-solid fa-tv text-amber-400"></i> Trình Chiếu
@@ -984,9 +992,15 @@
                         Tổng hợp kết quả học tập số, điểm chấm đồng đẳng (Peer Review) và Rubric của 4 nhóm
                     </p>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex flex-wrap items-center gap-2">
+                    <a href="slide.html" target="_blank" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-red-950 to-amber-950 hover:from-red-900 hover:to-amber-900 text-amber-200 border border-amber-600/50 font-bold text-xs flex items-center gap-1.5 transition shadow" title="Mở Slide trình chiếu bài dạy & hướng dẫn học sinh">
+                        <i class="fa-solid fa-display text-amber-400"></i> Mở Slide Trình Chiếu
+                    </a>
+                    <a href="Slide_Trinh_Chieu_Huong_Dan_Hoc_Tap_So_Bai_8_Tay_Son.pptx" download class="px-3 py-2 rounded-xl bg-stone-800 hover:bg-stone-700 text-amber-300 border border-amber-600/40 text-xs flex items-center gap-1.5 transition" title="Tải tệp PowerPoint (.pptx) gốc">
+                        <i class="fa-solid fa-file-powerpoint text-red-400"></i> Tải PPTX
+                    </a>
                     <button onclick="exportReportData()" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold text-xs flex items-center gap-2 transition shadow">
-                        <i class="fa-solid fa-file-arrow-down"></i> Xuất Báo Cáo Tiết Học
+                        <i class="fa-solid fa-file-arrow-down"></i> Xuất Báo Cáo
                     </button>
                     <button onclick="resetClassData()" class="px-3 py-2 rounded-xl bg-stone-800 hover:bg-red-950 text-red-300 text-xs border border-red-800/40 transition">
                         <i class="fa-solid fa-rotate-right"></i> Đặt lại

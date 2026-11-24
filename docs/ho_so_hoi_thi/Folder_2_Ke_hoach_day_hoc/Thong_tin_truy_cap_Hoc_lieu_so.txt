@@ -4,6 +4,8 @@ Môn: Lịch sử và Địa lí 8 (Bộ sách Kết nối tri thức với cu�
 
 1. ĐỊA CHỈ TRUY CẬP TRỰC TUYẾN (ONLINE):
 - Link Website ứng dụng trực tiếp: https://lichsu-eight.vercel.app/
+- Link Slide trình chiếu trực tuyến: https://lichsu-eight.vercel.app/slide.html
+- Link tải Tệp PowerPoint (.pptx): https://lichsu-eight.vercel.app/Slide_Trinh_Chieu_Huong_Dan_Hoc_Tap_So_Bai_8_Tay_Son.pptx
 - Link dự phòng (GitHub Mirror): https://quangthien18041996-stack.github.io/LICHSU/
 
 2. ĐẶC ĐIỂM KỸ THUẬT NỔI BẬT:

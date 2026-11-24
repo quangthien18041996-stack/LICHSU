@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide Trình Chiếu: Hướng Dẫn Học Tập Số Bài 8 - Phong Trào Tây Sơn (1771 - 1789) | TH - THCS Nguyễn Quốc Phú</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            background-color: #0b0908;
+            color: #f5f5f4;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow: hidden;
+            user-select: none;
+        }
+        .font-cinzel {
+            font-family: 'Playfair Display', Georgia, serif;
+        }
+        .slide-container {
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+        .slide {
+            display: none;
+            opacity: 0;
+            transform: scale(0.98);
+            transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            transform: scale(1);
+        }
+        .card-gold {
+            background: rgba(28, 21, 19, 0.85);
+            border: 1px solid rgba(217, 119, 6, 0.45);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+        }
+        .card-gold:hover {
+            border-color: rgba(245, 158, 11, 0.8);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #140d0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d97706;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col justify-between bg-gradient-to-br from-[#120e0d] via-[#0d0908] to-black">
+
+    <!-- TOP CONTROL & BRANDING BAR -->
+    <header class="flex-shrink-0 z-40 bg-stone-950/90 border-b border-amber-900/40 px-4 py-2 flex items-center justify-between gap-4">
+        <!-- Left: Brand & School -->
+        <div class="flex items-center gap-3">
+            <a href="index.html" class="flex items-center gap-2 group px-2.5 py-1 rounded-lg bg-amber-950/50 hover:bg-amber-900/60 border border-amber-600/40 transition" title="Trở về Không Gian Học Tập Số">
+                <i class="fa-solid fa-arrow-left text-amber-400 group-hover:-translate-x-0.5 transition-transform"></i>
+                <span class="text-xs font-bold text-amber-300">Về Trang Chủ</span>
+            </a>
+            <div class="hidden sm:block border-l border-amber-800/40 pl-3">
+                <p class="text-xs font-bold text-amber-200">TRƯỜNG LIÊN CẤP TH - THCS NGUYỄN QUỐC PHÚ</p>
+                <p class="text-[11px] text-stone-400">Giáo viên: <strong class="text-amber-300">Nguyễn Đức An</strong> • Lịch sử 8 (Bộ sách Kết nối tri thức)</p>
+            </div>
+        </div>
+
+        <!-- Center: Slide indicator -->
+        <div class="flex items-center gap-2 bg-stone-900/90 px-3 py-1 rounded-xl border border-amber-600/30 text-xs">
+            <span class="text-stone-400">Trang</span>
+            <span id="current-slide-num" class="font-bold text-amber-300 text-sm">1</span>
+            <span class="text-stone-500">/</span>
+            <span id="total-slides-num" class="font-bold text-stone-300 text-sm">12</span>
+        </div>
+
+        <!-- Right: Actions & Tools -->
+        <div class="flex items-center gap-2">
+            <!-- Audio button: Hào Khí Việt Nam -->
+            <button onclick="toggleMusic()" id="btn-music" class="px-2.5 py-1 rounded-lg bg-stone-900 hover:bg-stone-800 border border-amber-600/40 text-amber-300 text-xs flex items-center gap-1.5 transition" title="Bật/Dừng bài hát Hào Khí Việt Nam">
+                <i class="fa-solid fa-music text-amber-400" id="icon-music"></i>
+                <span class="hidden md:inline">Nhạc Sử Thi</span>
+            </button>
+            <audio id="audio-music" src="images/hao_khi_viet_nam.mp3" preload="auto"></audio>
+
+            <!-- Audio button: Giọng đọc Quang Trung -->
+            <button onclick="toggleSpeech()" id="btn-speech" class="px-2.5 py-1 rounded-lg bg-red-950/60 hover:bg-red-900/80 border border-amber-500/40 text-amber-200 text-xs flex items-center gap-1.5 transition" title="Nghe lời hiệu triệu của Quang Trung">
+                <i class="fa-solid fa-volume-high text-amber-400" id="icon-speech"></i>
+                <span class="hidden md:inline">Lời Dụ Quang Trung</span>
+            </button>
+            <audio id="audio-speech" src="images/giong_quang_trung.mp3" preload="auto"></audio>
+
+            <!-- Download PPTX button -->
+            <a href="Slide_Trinh_Chieu_Huong_Dan_Hoc_Tap_So_Bai_8_Tay_Son.pptx" download class="px-2.5 py-1 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold text-xs flex items-center gap-1.5 transition shadow" title="Tải tệp trình chiếu PowerPoint (.pptx) gốc">
+                <i class="fa-solid fa-file-powerpoint text-red-950"></i>
+                <span class="hidden lg:inline">Tải Tệp PPTX</span>
+            </a>
+
+            <!-- Fullscreen button -->
+            <button onclick="toggleFullscreen()" class="p-1.5 px-2 rounded-lg bg-stone-900 hover:bg-stone-800 border border-amber-600/40 text-amber-300 text-xs transition" title="Toàn màn hình trình chiếu (F11)">
+                <i class="fa-solid fa-expand" id="icon-fullscreen"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN SLIDE DISPLAY AREA -->
+    <main class="flex-1 w-full max-w-[1550px] mx-auto p-4 sm:p-6 overflow-hidden flex flex-col justify-center items-center relative">
+
+        <!-- ========================================== -->
+        <!-- SLIDE 1: BÌA BÀI HỌC -->
+        <!-- ========================================== -->
+        <div class="slide active w-full h-full flex-col justify-between" data-slide="1">
+            <div class="w-full flex justify-between items-center bg-gradient-to-r from-red-950/80 via-amber-950/60 to-red-950/80 p-3 rounded-2xl border border-amber-600/50 mb-4 shadow-lg">
+                <span class="text-xs font-bold text-amber-300 tracking-wider uppercase flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                    Hội Thi Thiết Kế Bài Dạy Tích Hợp STEM & Dạy Học Số Năm Học 2026 - 2027
+                </span>
+                <span class="text-xs text-amber-200/80 font-medium hidden md:inline">Định dạng chuẩn Công văn 5512/BGDĐT-GDTrH</span>
+            </div>
+
+            <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                <div class="lg:col-span-7 card-gold p-6 sm:p-8 rounded-3xl space-y-4">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold border border-amber-500/40">
+                        <i class="fa-solid fa-school text-amber-400"></i> TRƯỜNG LIÊN CẤP TH - THCS NGUYỄN QUỐC PHÚ
+                    </div>
+                    <p class="text-xs text-stone-400 font-medium">Môn: Lịch sử và Địa lí 8 (Bộ sách Kết nối tri thức với cuộc sống)</p>
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black font-cinzel text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 tracking-wide uppercase leading-tight">
+                        BÀI 8: PHONG TRÀO TÂY SƠN
+                        <span class="block text-2xl sm:text-3xl text-amber-300 mt-1">(GIAI ĐOẠN 1771 - 1789)</span>
+                    </h1>
+                    <div class="p-3.5 rounded-2xl bg-black/50 border-l-4 border-amber-500 space-y-1">
+                        <p class="text-sm font-bold text-amber-200 uppercase">HƯỚNG DẪN HỌC TẬP & THAO TÁC TRÊN NỀN TẢNG SỐ</p>
+                        <p class="text-xs text-stone-300">Không Gian Học Tập Số Tương Tác: <strong class="text-amber-400">"Hào Khí Tây Sơn"</strong></p>
+                    </div>
+                    <div class="pt-2 border-t border-stone-800 text-xs text-stone-300 space-y-1.5">
+                        <p class="flex items-center gap-2">
+                            <i class="fa-solid fa-chalkboard-user text-amber-400"></i>
+                            <span>Giáo viên thực hiện: <strong class="text-amber-300 font-bold text-sm">Thầy Nguyễn Đức An</strong></span>
+                        </p>
+                        <p class="flex items-center gap-2">
+                            <i class="fa-solid fa-clock text-amber-400"></i>
+                            <span>Thời lượng giảng dạy: <strong>02 Tiết (90 phút)</strong></span>
+                        </p>
+                        <p class="flex items-center gap-2">
+                            <i class="fa-solid fa-globe text-amber-400"></i>
+                            <span>Học liệu số trực tuyến: <a href="https://lichsu-eight.vercel.app/" target="_blank" class="text-amber-400 underline font-semibold hover:text-amber-300">https://lichsu-eight.vercel.app/</a></span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5 h-full flex flex-col justify-center">
+                    <div class="relative rounded-3xl overflow-hidden border-2 border-amber-500/70 shadow-2xl bg-black max-h-[480px]">
+                        <img src="images/quang_trung_epic_victory_1789.jpg" alt="Hoàng đế Quang Trung" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4">
+                            <p class="text-xs text-amber-200 font-cinzel italic">Hoàng đế Quang Trung cưỡi voi tiến vào Thăng Long đại thắng mùa xuân Kỷ Dậu 1789</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SLIDE 2: MỤC TIÊU & LỘ TRÌNH HỌC TẬP -->
+        <!-- ========================================== -->
+        <div class="slide w-full h-full flex-col justify-between" data-slide="2">
+            <div class="w-full flex justify-between items-center bg-stone-900/90 p-3 rounded-2xl border border-amber-600/40 mb-4 shadow">
+                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-bullseye"></i> Tổng Quan Chương Trình
+                </span>
+                <span class="text-base font-cinzel font-bold text-amber-200">MỤC TIÊU BÀI HỌC & HÀNH TRÌNH 4 TRẠM SỐ</span>
+                <span class="px-2.5 py-0.5 rounded-full bg-red-950 text-amber-300 text-xs font-bold border border-amber-600/40">Lộ Trình 2 Tiết</span>
+            </div>
+
+            <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch">
+                <!-- Col 1 -->
+                <div class="card-gold p-5 rounded-3xl flex flex-col justify-between space-y-3">
+                    <div>
+                        <div class="w-10 h-10 rounded-xl bg-red-900/60 border border-amber-500/50 flex items-center justify-center text-amber-300 text-lg mb-3">
+                            <i class="fa-solid fa-landmark"></i>
+                        </div>
+                        <h3 class="text-base font-bold font-cinzel text-amber-300 mb-2">1. NĂNG LỰC LỊCH SỬ</h3>
+                        <ul class="text-xs text-stone-300 space-y-2 leading-relaxed">
+                            <li class="flex items-start gap-1.5">
+                                <i class="fa-solid fa-check text-amber-400 mt-0.5"></i>
+                                <span>Khám phá <strong>4 mốc son lịch sử tiêu biểu</strong> của phong trào Tây Sơn (1771 - 1789).</span>
+                            </li>
+                            <li class="flex items-start gap-1.5">
+                                <i class="fa-solid fa-check text-amber-400 mt-0.5"></i>
+                                <span>Phân tích tài nghệ quân sự tài tình: thủy chiến Rạch Gầm, hành quân thần tốc Kỷ Dậu 1789.</span>
+                            </li>
+                            <li class="flex items-start gap-1.5">
+                                <i class="fa-solid fa-check text-amber-400 mt-0.5"></i>
+                                <span>Đánh giá công lao to lớn của Hoàng đế Quang Trung trong sự nghiệp thống nhất & bảo vệ Tổ quốc.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-amber-950/40 border border-amber-600/30 text-[11px] text-amber-200/90 italic">
+                        Khai thác nguồn tư liệu SGK Lịch sử 8 - Kết nối tri thức.
+                    </div>
+                </div>
+
+                <!-- Col 2 -->
+                <div class="card-gold p-5 rounded-3xl flex flex-col justify-between space-y-3">
+                    <div>
+                        <div class="w-10 h-10 rounded-xl bg-amber-900/60 border border-amber-500/50 flex items-center justify-center text-amber-300 text-lg mb-3">
+                            <i class="fa-solid fa-laptop-code"></i>
+                        </div>
+                        <h3 class="text-base font-bold font-cinzel text-amber-300 mb-2">2. NĂNG LỰC SỐ & STEM</h3>
+                        <ul class="text-xs text-stone-300 space-y-2 leading-relaxed">
+                            <li class="flex items-start gap-1.5">
+                                <i class="fa-solid fa-check text-amber-400 mt-0.5"></i>
+                                <span>Làm chủ không gian học tập số tương tác trực tuyến 60fps.</span>
+                            </li>
+                            <li class="flex items-start gap-1.5">
+                                <i class="fa-solid fa-check text-amber-400 mt-0.5"></i>
+                                <span>Xử lý đa phương tiện: tranh điện ảnh 3D, bản đồ số, thuyết minh audio HD.</span>
+                            </li>
+                            <li class="flex items-start gap-1.5">
+                                <i class="fa-solid fa-check text-amber-400 mt-0.5"></i>
+                                <span>Thực hành giải <strong>Mật mã Lịch sử</strong> và thu âm thuyết minh trực tiếp trên web.</span>
+                            </li>
+                            <li class="flex items-start gap-1.5">
+                                <i class="fa-solid fa-check text-amber-400 mt-0.5"></i>
+                                <span>Trải nghiệm quét mã QR và đánh giá đồng đẳng Realtime Cloud Sync.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-amber-950/40 border border-amber-600/30 text-[11px] text-amber-200/90 italic">
+                        Ứng dụng công nghệ quét mã QR chuẩn ISO/IEC 18004.
+                    </div>
+                </div>
+
+                <!-- Col 3 -->
+                <div class="card-gold p-5 rounded-3xl flex flex-col justify-between space-y-3 border-amber-500/70">
+                    <div>
+                        <div class="w-10 h-10 rounded-xl bg-red-950 border border-amber-500/50 flex items-center justify-center text-amber-300 text-lg mb-3">
+                            <i class="fa-solid fa-route"></i>
+                        </div>
+                        <h3 class="text-base font-bold font-cinzel text-amber-300 mb-2">3. HÀNH TRÌNH 4 TRẠM SỐ</h3>
+                        <ul class="text-xs text-stone-300 space-y-2 leading-relaxed">
+                            <li class="p-2 rounded-xl bg-black/40 border border-stone-800">
+                                <strong class="text-amber-400">TRẠM 1:</strong> Khởi động hào hùng - Lời hiệu triệu Quang Trung (7 phút).
+                            </li>
+                            <li class="p-2 rounded-xl bg-black/40 border border-stone-800">
+                                <strong class="text-amber-400">TRẠM 2:</strong> 4 Nhóm chiến dịch làm hồ sơ số & giải mật mã (25 phút).
+                            </li>
+                            <li class="p-2 rounded-xl bg-black/40 border border-stone-800">
+                                <strong class="text-amber-400">TRẠM 3:</strong> Giáo viên kiểm duyệt & xuất bản Poster (7 phút).
+                            </li>
+                            <li class="p-2 rounded-xl bg-black/40 border border-stone-800">
+                                <strong class="text-amber-400">TRẠM 4 (Tiết 2):</strong> Thuyết trình Poster, quét QR thả tim ❤️ (35 phút).
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-red-950/60 border border-red-700/40 text-[11px] text-amber-300 text-center font-bold">
+                        Dạy học phân hóa & Đánh giá quá trình thời gian thực
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SLIDE 3: KHỞI ĐỘNG HÀO HÙNG -->
+        <!-- ========================================== -->
+        <div class="slide w-full h-full flex-col justify-between" data-slide="3">
+            <div class="w-full flex justify-between items-center bg-stone-900/90 p-3 rounded-2xl border border-amber-600/40 mb-4 shadow">
+                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-fire"></i> Tiết 1: Hoạt Động Khởi Động
+                </span>
+                <span class="text-base font-cinzel font-bold text-amber-200">TRẠM 1: KHỞI ĐỘNG HÀO HÙNG TRÊN KHÔNG GIAN SỐ</span>
+                <span class="px-2.5 py-0.5 rounded-full bg-red-950 text-amber-300 text-xs font-bold border border-amber-600/40">7 Phút</span>
+            </div>
+
+            <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                <div class="lg:col-span-6 card-gold p-6 sm:p-7 rounded-3xl space-y-4">
+                    <h3 class="text-lg font-bold font-cinzel text-amber-300 flex items-center gap-2">
+                        <i class="fa-solid fa-clapperboard text-amber-400"></i> TRẢI NGHIỆM ĐIỆN ẢNH SỬ THI
+                    </h3>
+                    <div class="space-y-2 text-xs text-stone-300 leading-relaxed">
+                        <p class="flex items-start gap-2">
+                            <i class="fa-solid fa-caret-right text-amber-400 mt-1"></i>
+                            <span>Giáo viên mở <strong>Tab 1: Tổng Quan & Phim Tư Liệu</strong> trên màn chiếu lớn.</span>
+                        </p>
+                        <p class="flex items-start gap-2">
+                            <i class="fa-solid fa-caret-right text-amber-400 mt-1"></i>
+                            <span>Bật giai điệu sử thi hào sảng: ca khúc <strong>"Hào Khí Việt Nam"</strong> kết hợp hiệu ứng tàn lửa chiến trận sống động.</span>
+                        </p>
+                    </div>
+
+                    <!-- Lời hiệu triệu -->
+                    <div class="p-4 rounded-2xl bg-gradient-to-r from-red-950/70 to-black/80 border-l-4 border-amber-500 space-y-2 shadow-inner">
+                        <p class="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-quote-left text-amber-400"></i> Lời hiểu dụ đanh thép của Quang Trung trước ba quân (1788):
+                        </p>
+                        <p class="text-sm italic font-serif text-amber-200 leading-relaxed pl-2">
+                            “Đánh cho để dài tóc,<br>
+                            Đánh cho để đen răng,<br>
+                            Đánh cho nó chích luân bất phản,<br>
+                            Đánh cho nó phiến giáp bất hoàn,<br>
+                            Đánh cho sử tri nam quốc anh hùng chi hữu chủ!”
+                        </p>
+                    </div>
+
+                    <div class="p-3 rounded-xl bg-amber-950/30 border border-amber-600/30 text-xs text-stone-300">
+                        <p><strong class="text-amber-300">💡 Câu hỏi gợi mở:</strong> Em cảm nhận được khí phách hào hùng và quyết tâm gì của Hoàng đế Quang Trung qua lời hiệu triệu trên?</p>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-6 h-full flex flex-col justify-center">
+                    <div class="rounded-3xl overflow-hidden border border-amber-600/60 shadow-2xl bg-black">
+                        <img src="images/hinh1_tong_quan.png" alt="Giao diện Tổng quan" class="w-full h-auto object-cover max-h-[460px]">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SLIDE 4: PHÂN CHIA 4 NHÓM CHIẾN DỊCH -->
+        <!-- ========================================== -->
+        <div class="slide w-full h-full flex-col justify-between" data-slide="4">
+            <div class="w-full flex justify-between items-center bg-stone-900/90 p-3 rounded-2xl border border-amber-600/40 mb-3 shadow">
+                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-users"></i> Hình Thành Kiến Thức
+                </span>
+                <span class="text-base font-cinzel font-bold text-amber-200">PHÂN CÔNG 4 NHÓM CHIẾN DỊCH & NHIỆM VỤ TRỌNG TÂM</span>
+                <span class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold border border-amber-500/40">4 Chuyên Đề</span>
+            </div>
+
+            <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Group 1 -->
+                <div class="card-gold p-4 rounded-2xl space-y-2 border-l-4 border-l-amber-500">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 text-xs font-bold border border-amber-500/40">NHÓM 1</span>
+                        <span class="text-xs text-stone-400">1771 - 1777</span>
+                    </div>
+                    <h4 class="text-sm font-bold font-cinzel text-amber-200">KHỞI NGHĨA BÙNG NỔ & LẬT ĐỔ CHÚA NGUYỄN</h4>
+                    <ul class="text-xs text-stone-300 space-y-1">
+                        <li>• <strong>Địa bàn:</strong> Căn cứ Tây Sơn thượng đạo (An Khê, Gia Lai) và hạ đạo (Tây Sơn, Bình Định).</li>
+                        <li>• <strong>Lực lượng:</strong> Nông dân nghèo, đồng bào Bana, Chăm, thợ thủ công, thương nhân.</li>
+                        <li>• <strong>Chiến công:</strong> 4 lần tiến quân vào Gia Định lật đổ hoàn toàn chính quyền chúa Nguyễn.</li>
+                        <li>• <strong>Từ khóa:</strong> Lấy của nhà giàu chia cho người nghèo, cờ đào áo vải.</li>
+                    </ul>
+                </div>
+
+                <!-- Group 2 -->
+                <div class="card-gold p-4 rounded-2xl space-y-2 border-l-4 border-l-red-500">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-0.5 rounded bg-red-500/20 text-red-300 text-xs font-bold border border-red-500/40">NHÓM 2</span>
+                        <span class="text-xs text-stone-400">Năm 1785</span>
+                    </div>
+                    <h4 class="text-sm font-bold font-cinzel text-amber-200">CHIẾN THẮNG RẠCH GẦM - XOÀI MÚT (ĐÁNH XIÊM)</h4>
+                    <ul class="text-xs text-stone-300 space-y-1">
+                        <li>• <strong>Bối cảnh:</strong> Nguyễn Ánh cầu viện 5 vạn quân Xiêm tràn sang cướp phá Gia Định.</li>
+                        <li>• <strong>Địa bàn:</strong> Khúc sông Tiền từ Rạch Gầm đến Xoài Mút (Tiền Giang).</li>
+                        <li>• <strong>Nghệ thuật:</strong> Thủy chiến mai phục, nghi binh nhử địch vào trận địa hẹp khi triều rút.</li>
+                        <li>• <strong>Kết quả:</strong> Đánh tan 5 vạn quân giặc, bảo vệ vững chắc nền độc lập bờ cõi phía Nam.</li>
+                    </ul>
+                </div>
+
+                <!-- Group 3 -->
+                <div class="card-gold p-4 rounded-2xl space-y-2 border-l-4 border-l-blue-500">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-0.5 rounded bg-blue-500/20 text-blue-300 text-xs font-bold border border-blue-500/40">NHÓM 3</span>
+                        <span class="text-xs text-stone-400">1786 - 1788</span>
+                    </div>
+                    <h4 class="text-sm font-bold font-cinzel text-amber-200">TIẾN QUÂN RA BẮC LẬT ĐỔ TRỊNH - NGUYỄN</h4>
+                    <ul class="text-xs text-stone-300 space-y-1">
+                        <li>• <strong>Chiến dịch Phú Xuân:</strong> Giải phóng toàn bộ Đàng Trong, hạ thành Phú Xuân (1786).</li>
+                        <li>• <strong>Tiến thẳng Thăng Long:</strong> Với danh nghĩa 'Phù Lê diệt Trịnh', đánh sụp tập đoàn chúa Trịnh.</li>
+                        <li>• <strong>Xóa bỏ Lê Chiêu Thống:</strong> Chấm dứt sự mục nát của chính quyền phong kiến Bắc Hà.</li>
+                        <li>• <strong>Ý nghĩa:</strong> Xóa bỏ ranh giới chia cắt Đàng Trong - Đàng Ngoài hơn 200 năm.</li>
+                    </ul>
+                </div>
+
+                <!-- Group 4 -->
+                <div class="card-gold p-4 rounded-2xl space-y-2 border-l-4 border-l-emerald-500">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/40">NHÓM 4</span>
+                        <span class="text-xs text-stone-400">Xuân Kỷ Dậu 1789</span>
+                    </div>
+                    <h4 class="text-sm font-bold font-cinzel text-amber-200">ĐẠI PHÁ 29 VẠN QUÂN THANH (NGỌC HỒI - ĐỐNG ĐA)</h4>
+                    <ul class="text-xs text-stone-300 space-y-1">
+                        <li>• <strong>Bối cảnh:</strong> Lê Chiêu Thống rước 29 vạn quân Mãn Thanh do Tôn Sĩ Nghị chỉ huy sang xâm lược.</li>
+                        <li>• <strong>Hành quân thần tốc:</strong> Lên ngôi Hoàng đế tại Phú Xuân, hành quân ngày đêm ra Tam Điệp.</li>
+                        <li>• <strong>Quyết chiến:</strong> Đêm mùng 4 rạng mùng 5 Tết đánh tan đồn Ngọc Hồi, Khương Thượng, Đống Đa.</li>
+                        <li>• <strong>Đại thắng:</strong> Trưa mùng 5 Tết Kỷ Dậu 1789, áo bào sạm màu thuốc súng vào Thăng Long.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SLIDE 5: HƯỚNG DẪN BƯỚC 1 - QUÉT QR & VÀO NHÓM -->
+        <!-- ========================================== -->
+        <div class="slide w-full h-full flex-col justify-between" data-slide="5">
+            <div class="w-full flex justify-between items-center bg-stone-900/90 p-3 rounded-2xl border border-amber-600/40 mb-4 shadow">
+                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-qrcode"></i> Quy Trình Học Tập Số
+                </span>
+                <span class="text-base font-cinzel font-bold text-amber-200">BƯỚC 1: QUÉT MÃ QR VÀO LỚP & CHỌN KHÔNG GIAN NHÓM</span>
+                <span class="px-2.5 py-0.5 rounded-full bg-red-950 text-amber-300 text-xs font-bold border border-amber-600/40">Bước 1 / 4</span>
+            </div>
+
+            <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                <div class="lg:col-span-6 card-gold p-6 rounded-3xl space-y-4">
+                    <h3 class="text-base font-bold font-cinzel text-amber-300 flex items-center gap-2">
+                        <i class="fa-solid fa-mobile-screen-button text-amber-400"></i> CÁC THAO TÁC CẦN THỰC HIỆN:
+                    </h3>
+                    <div class="space-y-3 text-xs text-stone-300 leading-relaxed">
+                        <div class="p-3 rounded-xl bg-black/40 border border-stone-800 space-y-1">
+                            <p class="font-bold text-amber-400">1. Quét mã QR trên máy chiếu:</p>
+                            <p>Dùng Camera điện thoại hoặc Zalo quét mã QR toàn lớp (hoặc mở trình duyệt gõ: <strong class="text-amber-300">https://lichsu-eight.vercel.app/</strong>).</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-black/40 border border-stone-800 space-y-1">
+                            <p class="font-bold text-amber-400">2. Mở Không gian nhóm:</p>
+                            <p>Bấm vào mục <strong>"4 Nhóm Làm Việc"</strong> trên thanh Menu chính của website.</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-black/40 border border-stone-800 space-y-1">
+                            <p class="font-bold text-amber-400">3. Chọn đúng Nhóm của mình:</p>
+                            <p>Nhấp vào tab chuyên đề: Nhóm 1, Nhóm 2, Nhóm 3 hoặc Nhóm 4.</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-black/40 border border-stone-800 space-y-1">
+                            <p class="font-bold text-amber-400">4. Khởi tạo thông tin nhóm:</p>
+                            <p>Nhập <strong>Tên nhóm tự đặt</strong> và <strong>Danh sách các thành viên</strong> cùng tham gia.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-6 h-full flex flex-col justify-center">
+                    <div class="rounded-3xl overflow-hidden border border-amber-600/60 shadow-2xl bg-black">
+                        <img src="images/hinh2_khong_gian_nhom.png" alt="Không gian làm việc nhóm" class="w-full h-auto object-cover max-h-[460px]">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SLIDE 6: HƯỚNG DẪN BƯỚC 2 - KHAI THÁC TƯ LIỆU -->
+        <!-- ========================================== -->
+        <div class="slide w-full h-full flex-col justify-between" data-slide="6">
+            <div class="w-full flex justify-between items-center bg-stone-900/90 p-3 rounded-2xl border border-amber-600/40 mb-4 shadow">
+                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-book-open"></i> Quy Trình Học Tập Số
+                </span>
+                <span class="text-base font-cinzel font-bold text-amber-200">BƯỚC 2: KHAI THÁC TƯ LIỆU SGK & LƯỢC ĐỒ SỐ TƯƠNG TÁC</span>
+                <span class="px-2.5 py-0.5 rounded-full bg-red-950 text-amber-300 text-xs font-bold border border-amber-600/40">Bước 2 / 4</span>
+            </div>
+
+            <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                <div class="lg:col-span-6 card-gold p-6 rounded-3xl space-y-4">
+                    <h3 class="text-base font-bold font-cinzel text-amber-300 flex items-center gap-2">
+                        <i class="fa-solid fa-map-location-dot text-amber-400"></i> KHAI THÁC HỌC LIỆU SỐ TÍCH HỢP:
+                    </h3>
+                    <div class="space-y-3 text-xs text-stone-300 leading-relaxed">
+                        <div class="p-3 rounded-xl bg-black/40 border border-stone-800 space-y-1">
+                            <p class="font-bold text-amber-400">1. Đọc đoạn trích SGK Lịch sử 8:</p>
+                            <p>Hệ thống trích lục sẵn nội dung chuẩn của bộ sách Kết nối tri thức với cuộc sống ngay trên màn hình làm bài.</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-black/40 border border-stone-800 space-y-1">
+                            <p class="font-bold text-amber-400">2. Quan sát Lược đồ trận đánh:</p>
+                            <p>Nhấp vào ảnh lược đồ để phóng to: xem thế trận sông ngòi, hướng tiến quân và các mũi phục kích.</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-black/40 border border-stone-800 space-y-1">
+                            <p class="font-bold text-amber-400">3. Thảo luận nhóm giải quyết 3 câu hỏi gợi mở:</p>
+                            <p>• Ai là người chỉ huy và đóng vai trò then chốt?<br>
+                               • Nét độc đáo trong nghệ thuật quân sự của Tây Sơn là gì?<br>
+                               • Ý nghĩa của thắng lợi này đối với vận mệnh dân tộc?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-6 h-full flex flex-col justify-center">
+                    <div class="rounded-3xl overflow-hidden border border-amber-600/60 shadow-2xl bg-black">
+                        <img src="images/luoc_do_rach_gam_xoai_mut.jpg" alt="Lược đồ trận đánh" class="w-full h-auto object-cover max-h-[460px]">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SLIDE 7: HƯỚNG DẪN BƯỚC 3 - ĐIỀN BÀI & MẬT MÃ -->
+        <!-- ========================================== -->
+        <div class="slide w-full h-full flex-col justify-between" data-slide="7">
+            <div class="w-full flex justify-between items-center bg-stone-900/90 p-3 rounded-2xl border border-amber-600/40 mb-4 shadow">
+                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-key"></i> Quy Trình Học Tập Số
+                </span>
+                <span class="text-base font-cinzel font-bold text-amber-200">BƯỚC 3: HOÀN THIỆN HỒ SƠ NHÓM & GIẢI MẬT MÃ LỊCH SỬ</span>
+                <span class="px-2.5 py-0.5 rounded-full bg-red-950 text-amber-300 text-xs font-bold border border-amber-600/40">Bước 3 / 4</span>
+            </div>
+
+            <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+                <!-- Col 1 -->
+                <div class="card-gold p-6 rounded-3xl space-y-3 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-base font-bold font-cinzel text-amber-300 flex items-center gap-2 mb-3">
+                            <i class="fa-solid fa-pen-to-square text-amber-400"></i> 4 NỘI DUNG BẮT BUỘC TRONG BÀI LÀM:
+                        </h3>
+                        <div class="space-y-2.5 text-xs text-stone-300">
+                            <div class="p-2.5 rounded-xl bg-black/40 border border-stone-800">
+                                <strong class="text-amber-400">1. Khẩu hiệu hành động (Slogan):</strong>
+                                <p class="text-stone-400 mt-0.5">Sáng tạo câu khẩu hiệu thể hiện ý chí quật khởi của nghĩa quân (VD: "Cờ đào rực lửa - Quét sạch giặc thù").</p>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-black/40 border border-stone-800">
+                                <strong class="text-amber-400">2. Tóm tắt diễn biến chính:</strong>
+                                <p class="text-stone-400 mt-0.5">Trình bày súc tích các giai đoạn, địa danh lịch sử quan trọng theo trình tự thời gian.</p>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-black/40 border border-stone-800">
+                                <strong class="text-amber-400">3. Nghệ thuật quân sự độc đáo:</strong>
+                                <p class="text-stone-400 mt-0.5">Nêu rõ chiến thuật: Thủy chiến mai phục, nghi binh, thần tốc bất ngờ...</p>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-black/40 border border-stone-800">
+                                <strong class="text-amber-400">4. Đánh giá vai trò Nguyễn Huệ:</strong>
+                                <p class="text-stone-400 mt-0.5">Khẳng định tài năng lãnh đạo kiệt xuất và phẩm chất vì nước vì dân của người anh hùng áo vải.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Col 2 -->
+                <div class="card-gold p-6 rounded-3xl space-y-3 flex flex-col justify-between border-red-800/60 bg-gradient-to-br from-stone-900 via-[#1c1210] to-red-950/30">
+                    <div>
+                        <h3 class="text-base font-bold font-cinzel text-amber-300 flex items-center gap-2 mb-3">
+                            <i class="fa-solid fa-shield-halved text-red-400"></i> THỬ THÁCH ĐẶC BIỆT: "MẬT MÃ LỊCH SỬ"
+                        </h3>
+                        <div class="space-y-3 text-xs text-stone-300">
+                            <p class="leading-relaxed">
+                                Mỗi nhóm có một <strong class="text-amber-300">câu đố bí ẩn lịch sử độc quyền</strong> tích hợp trực tiếp trên hệ thống làm bài.
+                            </p>
+                            <div class="p-3 rounded-2xl bg-black/60 border border-amber-600/40 space-y-1.5">
+                                <p class="font-bold text-amber-400 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-magnifying-glass"></i> Cách thức giải mật mã:
+                                </p>
+                                <ul class="space-y-1 text-stone-300 pl-4 list-disc">
+                                    <li>Đọc kỹ câu đố bí ẩn gợi ý về địa danh, nhân vật hoặc sự kiện then chốt.</li>
+                                    <li>Tra cứu nguồn sử liệu SGK để tìm ra <strong>Từ khóa mật mã</strong>.</li>
+                                    <li>Nhập đáp án vào ô <em>"Từ khóa mật mã lịch sử"</em>.</li>
+                                </ul>
+                            </div>
+                            <div class="p-3 rounded-2xl bg-amber-950/50 border border-amber-500/40 text-amber-200">
+                                <p class="font-bold text-amber-300 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-award text-yellow-400"></i> Phần thưởng sáng tạo:
+                                </p>
+                                <p class="mt-1">Nhóm giải đúng mật mã sẽ được <strong>cộng điểm trực tiếp</strong> và nhận huy hiệu vinh danh <em>"Nhà Sử Học Xuất Sắc"</em> trên Poster Triển Lãm!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SLIDE 8: HƯỚNG DẪN BƯỚC 4 - THU ÂM & NỘP BÀI -->
+        <!-- ========================================== -->
+        <div class="slide w-full h-full flex-col justify-between" data-slide="8">
+            <div class="w-full flex justify-between items-center bg-stone-900/90 p-3 rounded-2xl border border-amber-600/40 mb-4 shadow">
+                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-microphone"></i> Quy Trình Học Tập Số
+                </span>
+                <span class="text-base font-cinzel font-bold text-amber-200">BƯỚC 4: THU ÂM THUYẾT MINH & NỘP BÀI CHO GIÁO VIÊN DUYỆT</span>
+                <span class="px-2.5 py-0.5 rounded-full bg-red-950 text-amber-300 text-xs font-bold border border-amber-600/40">Bước 4 / 4</span>
+            </div>
+
+            <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                <div class="lg:col-span-6 card-gold p-6 rounded-3xl space-y-4">
+                    <h3 class="text-base font-bold font-cinzel text-amber-300 flex items-center gap-2">
+                        <i class="fa-solid fa-headphones text-amber-400"></i> CÔNG CỤ THU ÂM TRỰC TIẾP TRÊN WEB:
+                    </h3>
+                    <div class="space-y-3 text-xs text-stone-300 leading-relaxed">
+                        <div class="p-3 rounded-xl bg-black/40 border border-stone-800 space-y-1">
+                            <p class="font-bold text-amber-400">1. Cử giọng đọc đại diện:</p>
+                            <p>Chọn bạn có chất giọng truyền cảm, dõng dạc, thể hiện được không khí hào hùng của phong trào Tây Sơn.</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-black/40 border border-stone-800 space-y-1">
+                            <p class="font-bold text-amber-400">2. Thực hiện ghi âm (60 - 90 giây):</p>
+                            <p>• <strong>Cách 1:</strong> Bấm nút <em>"Bắt đầu thu âm"</em> (Mic) trực tiếp trên điện thoại/máy tính.<br>
+                               • <strong>Cách 2:</strong> Tải tệp âm thanh ghi âm sẵn từ máy (.mp3, .wav).</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-black/40 border border-stone-800 space-y-1">
+                            <p class="font-bold text-amber-400">3. Nghe lại & Kiểm tra chất lượng:</p>
+                            <p>Bấm nghe lại để đảm bảo âm thanh rõ ràng, không bị ồn hay đứt quãng.</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-red-950/60 border border-red-700/50 space-y-1">
+                            <p class="font-bold text-amber-300">4. Nộp bài cho Giáo viên:</p>
+                            <p>Bấm nút to màu đỏ: <strong>"GỬI BÀI CHO GIÁO VIÊN KIỂM DUYỆT"</strong> để chuyển giao sản phẩm lên bảng điều khiển sư phạm.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-6 h-full flex flex-col justify-center">
+                    <div class="rounded-3xl overflow-hidden border border-amber-600/60 shadow-2xl bg-black">
+                        <img src="images/hinh3_thu_am_audio.png" alt="Công cụ thu âm trực tiếp" class="w-full h-auto object-cover max-h-[460px]">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SLIDE 9: KIỂM DUYỆT CỦA GV & XUẤT BẢN POSTER -->
+        <!-- ========================================== -->
+        <div class="slide w-full h-full flex-col justify-between" data-slide="9">
+            <div class="w-full flex justify-between items-center bg-stone-900/90 p-3 rounded-2xl border border-amber-600/40 mb-4 shadow">
+                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-stamp"></i> Chuyển Giao Sư Phạm
+                </span>
+                <span class="text-base font-cinzel font-bold text-amber-200">QUY TRÌNH KIỂM DUYỆT SƯ PHẠM & XUẤT BẢN POSTER DI SẢN</span>
+                <span class="px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-300 text-xs font-bold border border-emerald-600/40">Duyệt & Xuất Bản</span>
+            </div>
+
+            <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                <div class="lg:col-span-6 card-gold p-6 rounded-3xl space-y-4">
+                    <h3 class="text-base font-bold font-cinzel text-amber-300 flex items-center gap-2">
+                        <i class="fa-solid fa-shield-heart text-amber-400"></i> VAI TRÒ CỦA GIÁO VIÊN & HỆ THỐNG:
+                    </h3>
+                    <div class="space-y-3 text-xs text-stone-300 leading-relaxed">
+                        <div class="p-3 rounded-xl bg-black/40 border border-stone-800 space-y-1">
+                            <p class="font-bold text-amber-400">1. Trung tâm kiểm duyệt sư phạm:</p>
+                            <p>Thầy giáo <strong>Nguyễn Đức An</strong> theo dõi bài nộp của 4 nhóm trên Bảng điều khiển (Teacher Moderation Dashboard).</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-black/40 border border-stone-800 space-y-1">
+                            <p class="font-bold text-amber-400">2. Thẩm định tính chuẩn xác sử liệu:</p>
+                            <p>Thầy kiểm tra sử liệu, chính tả, cách phân tích chiến thuật và chất lượng tệp ghi âm giọng đọc.</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-black/40 border border-stone-800 space-y-1">
+                            <p class="font-bold text-amber-400">3. Phê duyệt & Chuyển đổi số:</p>
+                            <p>Khi thầy bấm <em>"Phê duyệt đạt chuẩn"</em>, hệ thống tự động tổng hợp bài viết và bản thu âm thành <strong>POSTER TRIỂN LÃM DI SẢN</strong> tại Tab 2.</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-amber-950/50 border border-amber-600/40 space-y-1">
+                            <p class="font-bold text-amber-300">4. Tự động sinh Mã QR tương tác:</p>
+                            <p>Mỗi Poster được cấp <strong>1 mã QR riêng</strong> để sẵn sàng cho hoạt động đánh giá đồng đẳng ở Tiết 2!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-6 h-full flex flex-col justify-center">
+                    <div class="rounded-3xl overflow-hidden border border-amber-600/60 shadow-2xl bg-black">
+                        <img src="images/hinh4_kiem_duyet_gv.png" alt="Trung tâm kiểm duyệt GV" class="w-full h-auto object-cover max-h-[460px]">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SLIDE 10: TIẾT 2 - BÁO CÁO & QUÉT QR ĐỒNG BỘ ĐÁM MÂY -->
+        <!-- ========================================== -->
+        <div class="slide w-full h-full flex-col justify-between" data-slide="10">
+            <div class="w-full flex justify-between items-center bg-stone-900/90 p-3 rounded-2xl border border-amber-600/40 mb-4 shadow">
+                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Tiết 2: Đột Phá Sư Phạm Số
+                </span>
+                <span class="text-base font-cinzel font-bold text-amber-200">TIẾT 2: BÁO CÁO POSTER & QUÉT QR ĐÁNH GIÁ ĐỒNG ĐẲNG REALTIME</span>
+                <span class="px-2.5 py-0.5 rounded-full bg-red-950 text-amber-300 text-xs font-bold border border-amber-600/40">Tiết 2 (45 Phút)</span>
+            </div>
+
+            <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                <div class="lg:col-span-6 card-gold p-6 rounded-3xl space-y-4">
+                    <h3 class="text-base font-bold font-cinzel text-amber-300 flex items-center gap-2">
+                        <i class="fa-solid fa-tower-broadcast text-amber-400"></i> TRẢI NGHIỆM ĐỒNG BỘ THỜI GIAN THỰC (CLOUD SYNC):
+                    </h3>
+                    <div class="space-y-3 text-xs text-stone-300 leading-relaxed">
+                        <div class="p-3 rounded-xl bg-black/40 border border-stone-800 space-y-1">
+                            <p class="font-bold text-amber-400">1. Thuyết trình Poster (6 phút/nhóm):</p>
+                            <p>Đại diện nhóm lên bảng báo cáo nội dung kết hợp bật phát bản thu âm giọng đọc hào hùng.</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-black/40 border border-stone-800 space-y-1">
+                            <p class="font-bold text-amber-400">2. Cả lớp quét mã QR trên màn chiếu:</p>
+                            <p>Học sinh dưới lớp dùng điện thoại quét mã QR tại góc Poster của nhóm bạn để mở thẳng trang tương tác.</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-black/40 border border-stone-800 space-y-1">
+                            <p class="font-bold text-amber-400">3. Bấm Thả tim ❤️ yêu thích:</p>
+                            <p>Bình chọn cho Poster có nội dung hay, giọng đọc hào sảng và thiết kế đẹp mắt.</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-amber-950/50 border border-amber-600/40 space-y-1">
+                            <p class="font-bold text-amber-300">4. Gửi lời bình luận nhận xét:</p>
+                            <p>Viết nhận xét, góp ý chân thành và bấm gửi. Lời nhận xét sẽ <strong>hiện lên màn hình lớn sau 2 giây!</strong></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-6 h-full flex flex-col justify-center">
+                    <div class="rounded-3xl overflow-hidden border border-amber-600/60 shadow-2xl bg-black">
+                        <img src="images/hinh5_quet_ma_qr.png" alt="Quét mã QR và thả tim" class="w-full h-auto object-cover max-h-[460px]">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SLIDE 11: TIÊU CHÍ ĐÁNH GIÁ & RUBRIC -->
+        <!-- ========================================== -->
+        <div class="slide w-full h-full flex-col justify-between" data-slide="11">
+            <div class="w-full flex justify-between items-center bg-stone-900/90 p-3 rounded-2xl border border-amber-600/40 mb-3 shadow">
+                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-list-check"></i> Đánh Giá Quá Trình
+                </span>
+                <span class="text-base font-cinzel font-bold text-amber-200">TIÊU CHÍ ĐÁNH GIÁ & BẢNG ĐIỂM RUBRIC SƯ PHẠM</span>
+                <span class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold border border-amber-500/40">Thang Điểm 10</span>
+            </div>
+
+            <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Criteria 1 -->
+                <div class="card-gold p-4 rounded-2xl space-y-1.5 border-l-4 border-l-amber-500">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-bold font-cinzel text-amber-300">1. TÍNH CHUẨN XÁC SỬ LIỆU</h4>
+                        <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-xs font-bold">3.0 Điểm</span>
+                    </div>
+                    <ul class="text-xs text-stone-300 space-y-1">
+                        <li>• Tái hiện chuẩn xác bối cảnh lịch sử, thời gian và địa bàn then chốt.</li>
+                        <li>• Nêu bật được các diễn biến cốt lõi, không sai lệch số liệu lịch sử.</li>
+                        <li>• Khai thác hiệu quả nguồn sử liệu SGK Kết nối tri thức và lược đồ số.</li>
+                        <li>• Đánh giá khách quan, sâu sắc về vai trò của lãnh tụ Quang Trung.</li>
+                    </ul>
+                </div>
+
+                <!-- Criteria 2 -->
+                <div class="card-gold p-4 rounded-2xl space-y-1.5 border-l-4 border-l-red-500">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-bold font-cinzel text-amber-300">2. GIẢI MẬT MÃ & NGHỆ THUẬT QUÂN SỰ</h4>
+                        <span class="px-2 py-0.5 rounded bg-red-500/20 text-red-300 text-xs font-bold">2.5 Điểm</span>
+                    </div>
+                    <ul class="text-xs text-stone-300 space-y-1">
+                        <li>• Giải chính xác câu đố bí ẩn lịch sử và tìm đúng Từ khóa mật mã.</li>
+                        <li>• Phân tích sắc bén nét độc đáo trong nghệ thuật tác chiến Tây Sơn.</li>
+                        <li>• Nêu bật yếu tố bất ngờ, mai phục, nghi binh, thần tốc trong chiến dịch.</li>
+                        <li>• Khẩu hiệu hành động (Slogan) mang tính sáng tạo và cảm hứng hào hùng.</li>
+                    </ul>
+                </div>
+
+                <!-- Criteria 3 -->
+                <div class="card-gold p-4 rounded-2xl space-y-1.5 border-l-4 border-l-blue-500">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-bold font-cinzel text-amber-300">3. THUYẾT MINH & CHẤT LƯỢNG ÂM THANH</h4>
+                        <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 text-xs font-bold">2.5 Điểm</span>
+                    </div>
+                    <ul class="text-xs text-stone-300 space-y-1">
+                        <li>• Bản thu âm rõ ràng, không bị rè hoặc lẫn nhiều tạp âm môi trường.</li>
+                        <li>• Giọng đọc truyền cảm, hào sảng, đúng tinh thần sử thi Tây Sơn.</li>
+                        <li>• Poster trình bày trang trọng, bố cục hài hòa hoa văn Trống đồng.</li>
+                        <li>• Phối hợp nhịp nhàng giữa trình chiếu Poster và âm thanh minh họa.</li>
+                    </ul>
+                </div>
+
+                <!-- Criteria 4 -->
+                <div class="card-gold p-4 rounded-2xl space-y-1.5 border-l-4 border-l-emerald-500">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-bold font-cinzel text-amber-300">4. THUYẾT TRÌNH & ĐÁNH GIÁ ĐỒNG ĐẲNG</h4>
+                        <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-xs font-bold">2.0 Điểm</span>
+                    </div>
+                    <ul class="text-xs text-stone-300 space-y-1">
+                        <li>• Báo cáo viên tự tin, mạch lạc, làm chủ thời gian quy định (6 phút/nhóm).</li>
+                        <li>• Khả năng phản biện, trả lời lưu loát các câu hỏi gợi mở từ thầy cô và bạn.</li>
+                        <li>• Nhận được nhiều lượt thả tim ❤️ và đánh giá tích cực từ cả lớp qua mã QR.</li>
+                        <li>• Tinh thần đoàn kết, phân công nhịp nhàng giữa các thành viên.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SLIDE 12: TỔNG KẾT & THÔNG ĐIỆP -->
+        <!-- ========================================== -->
+        <div class="slide w-full h-full flex-col justify-between" data-slide="12">
+            <div class="w-full flex justify-between items-center bg-stone-900/90 p-3 rounded-2xl border border-amber-600/40 mb-4 shadow">
+                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-flag"></i> Tổng Kết & Định Hướng
+                </span>
+                <span class="text-base font-cinzel font-bold text-amber-200">TỔNG KẾT BÀI HỌC & THÔNG ĐIỆP KỶ NGUYÊN SỐ</span>
+                <span class="px-2.5 py-0.5 rounded-full bg-red-950 text-amber-300 text-xs font-bold border border-amber-600/40">Thông Điệp</span>
+            </div>
+
+            <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+                <!-- Col 1 -->
+                <div class="card-gold p-6 rounded-3xl space-y-3 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-base font-bold font-cinzel text-amber-300 flex items-center gap-2 mb-3">
+                            <i class="fa-solid fa-monument text-amber-400"></i> Ý NGHĨA LỊCH SỬ PHONG TRÀO TÂY SƠN:
+                        </h3>
+                        <div class="space-y-3 text-xs text-stone-300 leading-relaxed">
+                            <p><strong>1. Đập tan các tập đoàn phong kiến cát cứ:</strong> Lật đổ chúa Nguyễn ở Đàng Trong, Trịnh - Lê ở Đàng Ngoài, xóa bỏ ranh giới chia cắt giang sơn hơn 200 năm.</p>
+                            <p><strong>2. Bảo vệ vững chắc độc lập chủ quyền:</strong> Đánh tan 5 vạn quân Xiêm (1785) và đại phá 29 vạn quân Mãn Thanh (1789), lập nên những trang sử vàng chói lọi.</p>
+                            <p><strong>3. Tôn vinh thiên tài quân sự Quang Trung:</strong> Người anh hùng bách chiến bách thắng, biểu tượng sáng ngời của tinh thần quyết chiến quyết thắng và lòng yêu nước nồng nàn.</p>
+                            <p><strong>4. Bài học muôn đời:</strong> Lấy dân làm gốc, phát huy sức mạnh khối đại đoàn kết toàn dân tộc và nghệ thuật tác chiến thần tốc bất ngờ.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Col 2 -->
+                <div class="card-gold p-6 rounded-3xl space-y-3 flex flex-col justify-between border-amber-500/60 bg-gradient-to-br from-stone-900 via-[#1c1310] to-amber-950/40">
+                    <div>
+                        <h3 class="text-base font-bold font-cinzel text-amber-300 flex items-center gap-2 mb-3">
+                            <i class="fa-solid fa-graduation-cap text-yellow-400"></i> THÔNG ĐIỆP CHO HỌC SINH THỜI ĐẠI 4.0:
+                        </h3>
+                        <div class="space-y-3 text-xs text-stone-300 leading-relaxed">
+                            <p>• <strong>Kế thừa truyền thống bất khuất:</strong> Nuôi dưỡng lòng yêu nước, niềm tự hào dân tộc và ý thức trách nhiệm bảo vệ chủ quyền toàn vẹn lãnh thổ.</p>
+                            <p>• <strong>Làm chủ công nghệ số:</strong> Tích cực ứng dụng học liệu số, chuyển đổi số trong học tập để khám phá kho tàng tri thức lịch sử vô tận của cha ông.</p>
+                            <p>• <strong>Lan tỏa giá trị di sản:</strong> Chung tay gìn giữ và quảng bá hào khí dân tộc trên không gian mạng một cách văn minh, sáng tạo.</p>
+                            <div class="p-3.5 rounded-2xl bg-black/60 border border-amber-600/40 text-center space-y-1">
+                                <p class="text-amber-300 font-bold text-xs uppercase">Chúc các nhóm học sinh có tiết học số thật hào hứng & thành công rực rỡ!</p>
+                                <p class="text-[11px] text-stone-400">Thầy giáo: <strong class="text-amber-200">Nguyễn Đức An</strong> - Trường TH - THCS Nguyễn Quốc Phú</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- BOTTOM NAVIGATION CONTROLS -->
+    <footer class="flex-shrink-0 z-40 bg-stone-950/90 border-t border-amber-900/40 px-4 py-2 flex items-center justify-between gap-4">
+        <!-- Prev Button -->
+        <button onclick="prevSlide()" id="btn-prev" class="px-4 py-2 rounded-xl bg-stone-900 hover:bg-stone-800 border border-amber-600/40 text-amber-300 text-xs font-bold flex items-center gap-2 transition disabled:opacity-30 disabled:cursor-not-allowed">
+            <i class="fa-solid fa-chevron-left"></i>
+            <span class="hidden sm:inline">Trang Trước</span>
+        </button>
+
+        <!-- Slide Thumb Dots -->
+        <div class="flex items-center gap-1.5 overflow-x-auto max-w-[60vw] py-1 px-2" id="slide-dots">
+            <!-- Dynamic Dots generated by JS -->
+        </div>
+
+        <!-- Next Button -->
+        <button onclick="nextSlide()" id="btn-next" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 text-xs font-bold flex items-center gap-2 transition shadow disabled:opacity-30 disabled:cursor-not-allowed">
+            <span class="hidden sm:inline">Trang Sau</span>
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+
+    <!-- SCRIPT FOR SLIDE PRESENTATION ENGINE -->
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 12;
+        const slides = document.querySelectorAll('.slide');
+        const dotsContainer = document.getElementById('slide-dots');
+        const currentSlideNum = document.getElementById('current-slide-num');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+
+        // Create Navigation Dots
+        function initDots() {
+            dotsContainer.innerHTML = '';
+            for (let i = 1; i <= totalSlides; i++) {
+                const dot = document.createElement('button');
+                dot.className = `w-7 h-7 rounded-lg text-[11px] font-bold transition flex items-center justify-center border ${
+                    i === currentSlide 
+                        ? 'bg-amber-500 text-stone-950 border-amber-400 font-black shadow' 
+                        : 'bg-stone-900 text-stone-400 border-stone-800 hover:border-amber-600 hover:text-amber-300'
+                }`;
+                dot.innerText = i;
+                dot.onclick = () => goToSlide(i);
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        // Go to specific slide
+        function goToSlide(n) {
+            if (n < 1 || n > totalSlides) return;
+            currentSlide = n;
+
+            slides.forEach(s => {
+                s.classList.remove('active');
+                if (parseInt(s.getAttribute('data-slide')) === currentSlide) {
+                    s.classList.add('active');
+                }
+            });
+
+            currentSlideNum.innerText = currentSlide;
+            btnPrev.disabled = (currentSlide === 1);
+            btnNext.disabled = (currentSlide === totalSlides);
+
+            initDots();
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                goToSlide(currentSlide + 1);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 1) {
+                goToSlide(currentSlide - 1);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                e.preventDefault();
+                prevSlide();
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                goToSlide(1);
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                goToSlide(totalSlides);
+            } else if (e.key === 'f' || e.key === 'F') {
+                toggleFullscreen();
+            }
+        });
+
+        // Audio controls
+        const audioMusic = document.getElementById('audio-music');
+        const iconMusic = document.getElementById('icon-music');
+        function toggleMusic() {
+            if (audioMusic.paused) {
+                audioMusic.play();
+                iconMusic.className = "fa-solid fa-volume-high text-yellow-400 animate-pulse";
+            } else {
+                audioMusic.pause();
+                iconMusic.className = "fa-solid fa-music text-amber-400";
+            }
+        }
+
+        const audioSpeech = document.getElementById('audio-speech');
+        const iconSpeech = document.getElementById('icon-speech');
+        function toggleSpeech() {
+            if (audioSpeech.paused) {
+                audioSpeech.play();
+                iconSpeech.className = "fa-solid fa-volume-high text-yellow-300 animate-bounce";
+            } else {
+                audioSpeech.pause();
+                iconSpeech.className = "fa-solid fa-volume-high text-amber-400";
+            }
+        }
+
+        // Fullscreen toggle
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {});
+                document.getElementById('icon-fullscreen').className = "fa-solid fa-compress";
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen().catch(() => {});
+                    document.getElementById('icon-fullscreen').className = "fa-solid fa-expand";
+                }
+            }
+        }
+
+        // Initialize on load
+        initDots();
+        goToSlide(1);
+    </script>
+</body>
+</html>
